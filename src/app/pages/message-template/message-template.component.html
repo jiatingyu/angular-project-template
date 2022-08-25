@@ -1,0 +1,56 @@
+<nz-card nzTitle="现有模板">
+  <nz-table #basicTable [nzData]="Templates" [nzSize]="'middle'">
+    <thead>
+      <tr>
+        <th>编码</th>
+        <th>使用场景</th>
+        <th>更新时间</th>
+        <th [nzWidth]="'50%'">模板内容</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of basicTable.data">
+        <td>{{ data.code }}</td>
+        <td>{{ data.type }}</td>
+        <td>{{ data.updateTime }}</td>
+        <td>{{ data.content }}</td>
+      </tr>
+    </tbody>
+  </nz-table>
+</nz-card>
+<nz-card nzTitle="模板发送历史">
+  <nz-table
+    #logs
+    [nzData]="Logs"
+    [nzSize]="'middle'"
+    [nzFrontPagination]="false"
+    [nzTotal]="pageObj.total"
+    [nzPageSize]="pageObj.size"
+    [(nzPageIndex)]="pageObj.page"
+    (nzPageIndexChange)="historyData()"
+  >
+    <thead>
+      <tr>
+        <th>模板编码</th>
+        <th>发送时间</th>
+        <th>发送条数</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of logs.data">
+        <td>{{ data.templateCode }}</td>
+        <td>{{ data.sendDate }}</td>
+        <td>{{ data.total }}</td>
+      </tr>
+    </tbody>
+  </nz-table>
+  <ng-template #list>
+    <div nz-row nzType="flex" nzJustify="space-between">
+      <div>结果展示</div>
+      <div>
+        <button nz-button nzType="primary"><i nz-icon nzType="folder" nzTheme="outline"></i>新增</button>
+        <button nz-button nzType="dashed"><i nz-icon nzType="fire" nzTheme="outline"></i>刷新</button>
+      </div>
+    </div>
+  </ng-template>
+</nz-card>

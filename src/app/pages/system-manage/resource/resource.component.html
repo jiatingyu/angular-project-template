@@ -1,0 +1,126 @@
+<nz-card [nzTitle]="list">
+  <nz-table #expandTable [nzData]="listOfMapData" [nzLoading]="resourceLoading">
+    <thead>
+      <tr>
+        <th>资源图标</th>
+        <th>资源名称</th>
+        <th>资源路径</th>
+        <th>更新时间</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      <ng-container *ngFor="let data of expandTable.data; let i = index; last as last1; first as first1">
+        <ng-container *ngFor="let item of mapOfExpandedData[data.id]; index as ind; last as last; first as first">
+          <tr
+            *ngIf="(item.parent && item.parent.expand) || !item.parent"
+            (click)="selectRow(item)"
+            [ngStyle]="{ 'background-color': selectedRow.id === item.id ? 'darkgrey' : '' }"
+          >
+            <td
+              [nzIndentSize]="item.level * 20"
+              [nzShowExpand]="!!item.children"
+              [(nzExpand)]="item.expand"
+              (nzExpandChange)="collapse(mapOfExpandedData[data.id], item, $event)"
+            >
+              <i nz-icon [nzType]="item.icon" nzTheme="outline"></i>
+            </td>
+            <td>{{ item.name }}</td>
+            <td>{{ item.url }}</td>
+            <td>{{ item.updateTime }}</td>
+            <td>
+              <a (click)="edit(item, $event)">编辑</a>
+              <nz-divider nzType="vertical"></nz-divider>
+              <a nz-popconfirm nzPopconfirmTitle="你确定要删除此记录吗?" (nzOnConfirm)="delete(item.id)">删除</a>
+              <a
+                *ngIf="(item.level === 0 && !first1) || (item.level !== 0 && ind !== 1)"
+                (click)="upAndDown(item, item.level == 0 ? expandTable.data[i - 1] : mapOfExpandedData[data.id][ind - 1])"
+              >
+                <nz-divider nzType="vertical"></nz-divider>
+                上移</a
+              >
+              <a
+                *ngIf="(item.level === 0 && !last1) || (item.level !== 0 && !last)"
+                (click)="upAndDown(item, item.level == 0 ? expandTable.data[i + 1] : mapOfExpandedData[data.id][ind + 1])"
+              >
+                <nz-divider nzType="vertical"></nz-divider>
+                下移</a
+              >
+            </td>
+          </tr>
+        </ng-container>
+      </ng-container>
+    </tbody>
+  </nz-table>
+</nz-card>
+<ng-template #list>
+  <div nz-row nzType="flex" nzJustify="space-between">
+    <div>结果展示</div>
+    <div>
+      <button nz-button nzType="primary" (click)="add()"><i nz-icon nzType="folder" nzTheme="outline"></i>新增</button>
+      <button nz-button nzType="dashed" (click)="loadData()"><i nz-icon nzType="fire" nzTheme="outline"></i>刷新</button>
+    </div>
+  </div>
+</ng-template>
+
+<nz-modal
+  nzWidth="70%"
+  [nzMaskClosable]="false"
+  [(nzVisible)]="resourceVisible"
+  nzTitle="资源信息"
+  (nzOnCancel)="resourceVisible = !resourceVisible"
+  (nzOnOk)="addHandle()"
+>
+  <ng-container *nzModalContent>
+    <form nz-form [formGroup]="validateForm">
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="parentId">上级菜单</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+          <nz-select nzDisabled formControlName="parentId" id="parentId">
+            <nz-option *ngFor="let item of parentResources" [nzLabel]="item.name" [nzValue]="item.id"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="icon">菜单图标</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+          <nz-select style="width: 100%" formControlName="icon" id="icon" [nzCustomTemplate]="custom">
+            <nz-option nzCustomContent nzLabel="dot-chart" nzValue="dot-chart"
+              ><i nz-icon nzType="dot-chart" nzTheme="outline"></i>
+            </nz-option>
+            <nz-option nzCustomContent nzLabel="appstore" nzValue="appstore"
+              ><i nz-icon nzType="appstore" nzTheme="outline"></i>
+            </nz-option>
+            <nz-option nzCustomContent nzLabel="database" nzValue="database"
+              ><i nz-icon nzType="database" nzTheme="outline"></i>
+            </nz-option>
+            <nz-option nzCustomContent nzLabel="setting" nzValue="setting"
+              ><i nz-icon nzType="setting" nzTheme="outline"></i>
+            </nz-option>
+            <nz-option nzCustomContent nzLabel="sliders" nzValue="sliders"
+              ><i nz-icon nzType="sliders" nzTheme="outline"></i>
+            </nz-option>
+            <nz-option nzCustomContent nzLabel="pie-chart" nzValue="pie-chart"
+              ><i nz-icon nzType="pie-chart" nzTheme="outline"></i>
+            </nz-option>
+          </nz-select>
+          <ng-template #custom let-selected>
+            <span>Label: {{ selected.nzLabel }}</span>
+          </ng-template>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="name">菜单名称</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="此项为必填项">
+          <input nz-input formControlName="name" id="name" />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="url">菜单链接</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+          <input nz-input formControlName="url" id="url" />
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container>
+</nz-modal>

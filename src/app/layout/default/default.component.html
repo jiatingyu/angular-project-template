@@ -1,0 +1,44 @@
+<div nz-row class="main" nzType="flex" nzJustify="center" nzAlign="bottom">
+  <div nz-col nzSpan="4" [nzXl]="3" class="logo_wrap">
+    <!-- 核酸监测系统 -->
+    <img src="./assets/logo.jpg" class="logo" />
+  </div>
+  <div nz-col nzSpan="16" [nzXl]="17">
+    <ul nz-menu nzMode="horizontal" (nzClick)="menuClick($event)">
+      <ng-container *ngFor="let menu of menus">
+        <li nz-menu-item [nzSelected]="hasSelect(menu.url)" *ngIf="!menu.children">
+          <a [routerLink]="menu.url">
+            <i nz-icon [nzType]="menu.icon" nzTheme="outline"></i>
+            {{ menu.name }}
+          </a>
+        </li>
+        <li nz-submenu [nzTitle]="menu.name" [nzIcon]="menu.icon" *ngIf="menu.children">
+          <ul>
+            <li nz-menu-item *ngFor="let child of menu.children">
+              <a [routerLink]="child.url">
+                {{ child.name }}
+              </a>
+            </li>
+          </ul>
+        </li>
+      </ng-container>
+    </ul>
+  </div>
+  <div nz-col nzSpan="4" class="manage_row" nz-popover [nzPopoverContent]="Content">
+    <nz-avatar [nzText]="'M'" nzSize="large" style="vertical-align: middle"></nz-avatar>
+    {{ role?.roleName + ':' + userInfo?.userName || '管理员' }}
+  </div>
+</div>
+<div class="mainContent">
+  <nz-card class="content">
+    <ng-container *ngIf="byRoutertoName()">
+      <nz-page-header [nzTitle]="byRoutertoName()"> </nz-page-header>
+    </ng-container>
+    <router-outlet></router-outlet>
+  </nz-card>
+</div>
+
+<ng-template #Content>
+  <div style="width: 100px; padding: 1rem" (click)="toPerson()">个人中心</div>
+  <div style="width: 100px; padding: 1rem" (click)="loginOut()">退出登录</div>
+</ng-template>

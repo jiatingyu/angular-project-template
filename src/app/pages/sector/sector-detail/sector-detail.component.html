@@ -1,0 +1,251 @@
+<nz-page-header (nzBack)="onBack()" nzBackIcon>
+  <nz-page-header-title>行业人员</nz-page-header-title>
+  <nz-page-header-subtitle>全部人员信息列表</nz-page-header-subtitle>
+  <nz-page-header-extra>
+    <button nz-button nzType="primary" (click)="exportData()" [nzLoading]="downLoading">
+      <i nz-icon nzType="logout" nzTheme="outline"></i>导出Excel
+    </button>
+    <button nz-button nzType="primary" (click)="sendMsg()" [nzLoading]="msgLoading">
+      <i nz-icon nzType="login" nzTheme="outline"></i>发送短信
+    </button>
+  </nz-page-header-extra>
+</nz-page-header>
+<form nz-form [formGroup]="searchForm" [nzLayout]="'inline'">
+  <nz-form-item>
+    <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="name">姓名</nz-form-label>
+    <nz-form-control [nzSm]="14" [nzXs]="24">
+      <input nz-input formControlName="name" id="name" />
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="idCard">身份证号</nz-form-label>
+    <nz-form-control [nzSm]="14" [nzXs]="24">
+      <input nz-input formControlName="idCard" id="idCard" />
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="color">状态</nz-form-label>
+    <nz-form-control [nzSm]="14" [nzXs]="24">
+      <nz-select formControlName="color" id="color" style="width: 100px">
+        <nz-option nzLabel="正常" [nzValue]="1"></nz-option>
+        <nz-option nzLabel="待检测" [nzValue]="2"></nz-option>
+        <nz-option nzLabel="警告" [nzValue]="3"></nz-option>
+      </nz-select>
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="queryDate">时间</nz-form-label>
+    <nz-form-control [nzSm]="14" [nzXs]="24">
+      <nz-date-picker formControlName="queryDate"></nz-date-picker>
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-control>
+      <button nz-button nzType="primary" (click)="search()">搜索</button>
+      <button nz-button (click)="reset()">重置</button>
+      <button nz-button nzType="primary" (click)="add()">新增</button>
+    </nz-form-control>
+  </nz-form-item>
+</form>
+<ng-template #Header> 查询结果人次共计 {{ pageObj.total }} 人 </ng-template>
+<nz-table
+  #editRowTable
+  nzShowSizeChanger
+  [nzFrontPagination]="false"
+  [nzLoading]="loading"
+  [nzTotal]="pageObj.total"
+  [(nzPageIndex)]="pageObj.page"
+  [(nzPageSize)]="pageObj.size"
+  (nzPageIndexChange)="loadData()"
+  (nzPageSizeChange)="search()"
+  nzBordered
+  [nzTitle]="Header"
+  [nzPageSizeOptions]="[20, 30, 40, 50]"
+  [nzData]="listOfData"
+  [nzSize]="'small'"
+>
+  <thead>
+    <tr>
+      <th
+        nzShowCheckbox
+        [(nzChecked)]="isAllDisplayDataChecked"
+        [nzIndeterminate]="isIndeterminate"
+        (nzCheckedChange)="checkAll($event)"
+      ></th>
+      <th nzWidth="6%">姓名</th>
+      <th nzWidth="6%">性别</th>
+      <th nzWidth="11%">电话</th>
+      <th nzWidth="11%">身份证号</th>
+      <th nzWidth="7%">检测频次</th>
+      <th nzWidth="6%">行业</th>
+      <th nzWidth="18%">工作单位</th>
+      <th nzWidth="8%">实检次数</th>
+      <th nzWidth="8%">应检次数</th>
+      <th nzWidth="8%">状态</th>
+      <th>操作</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let data of editRowTable.data">
+      <td nzShowCheckbox [(nzChecked)]="data.checked" (nzCheckedChange)="itemCheckedChange()"></td>
+      <td>
+        <ng-container *ngIf="!editCache[data.id].edit; else name">
+          {{ data.name }}
+        </ng-container>
+        <ng-template #name>
+          <input type="text" nz-input [(ngModel)]="editCache[data.id].data.name" />
+        </ng-template>
+      </td>
+      <td>
+        <ng-container *ngIf="!editCache[data.id].edit; else sex">
+          {{ data.sex }}
+        </ng-container>
+        <ng-template #sex>
+          <nz-select [(ngModel)]="editCache[data.id].data.sex" style="width: 100%">
+            <nz-option nzLabel="男" nzValue="男"></nz-option>
+            <nz-option nzLabel="女" nzValue="女"></nz-option>
+          </nz-select>
+        </ng-template>
+      </td>
+      <td>
+        <ng-container *ngIf="!editCache[data.id].edit; else phoneNumber">
+          {{ data.phoneNumber }}
+        </ng-container>
+        <ng-template #phoneNumber>
+          <input type="text" nz-input [(ngModel)]="editCache[data.id].data.phoneNumber" />
+        </ng-template>
+      </td>
+      <td>
+        <ng-container *ngIf="!editCache[data.id].edit; else idCard">
+          {{ data.idCard }}
+        </ng-container>
+        <ng-template #idCard>
+          <input type="text" nz-input [(ngModel)]="editCache[data.id].data.idCard" />
+        </ng-template>
+      </td>
+      <td>
+        <ng-container *ngIf="!editCache[data.id].edit; else gkcs">
+          {{ data.gkcs }}
+        </ng-container>
+        <ng-template #gkcs>
+          <nz-select [(ngModel)]="editCache[data.id].data.gkcs" style="width: 100%">
+            <nz-option *ngFor="let item of rateArr" [nzLabel]="item.name" [nzValue]="item.name"></nz-option>
+          </nz-select>
+        </ng-template>
+      </td>
+      <td>
+        <ng-container *ngIf="!editCache[data.id].edit; else trades">
+          {{ data.trades }}
+        </ng-container>
+        <ng-template #trades>
+          <input type="text" nz-input [(ngModel)]="editCache[data.id].data.trades" />
+        </ng-template>
+      </td>
+      <td>
+        <ng-container *ngIf="!editCache[data.id].edit; else gzdw">
+          {{ data.gzdw }}
+        </ng-container>
+        <ng-template #gzdw>
+          <input type="text" nz-input [(ngModel)]="editCache[data.id].data.gzdw" />
+        </ng-template>
+      </td>
+      <td nz-popover [nzPopoverContent]="Content">
+        <ng-template #Content>
+          <p *ngFor="let it of data.hsPos">{{ it.jcTime + '-->' + it.addr }}</p>
+        </ng-template>
+        {{ data.totalNum }}
+      </td>
+      <td>
+        {{ data.yjcs }}
+      </td>
+      <td>
+        <ng-container *ngIf="!editCache[data.id].edit; else color">
+          <nz-tag *ngIf="data?.color === 3" [nzColor]="'#f50'">警告</nz-tag>
+          <nz-tag *ngIf="data?.color === 2" [nzColor]="'#FFB90F'">待检测</nz-tag>
+          <nz-tag *ngIf="data?.color === 1" [nzColor]="'#87d068'">正常</nz-tag>
+        </ng-container>
+        <ng-template #color>
+          <nz-select [(ngModel)]="editCache[data.id].data.color" style="width: 100%">
+            <nz-option nzLabel="正常" [nzValue]="1"></nz-option>
+            <nz-option nzLabel="待检测" [nzValue]="2"></nz-option>
+            <nz-option nzLabel="警告" [nzValue]="3"></nz-option>
+          </nz-select>
+        </ng-template>
+      </td>
+      <td>
+        <div class="editable-row-operations">
+          <ng-container *ngIf="!editCache[data.id].edit; else saveTpl">
+            <a (click)="startEdit(data.id)">编辑</a>
+            <nz-divider nzType="vertical"></nz-divider>
+            <a nz-popconfirm nzPopconfirmTitle="确认要删除数据吗?" (nzOnConfirm)="deleteRow(data.id)">删除</a>
+          </ng-container>
+          <ng-template #saveTpl>
+            <a (click)="saveEdit(data.id)">提交</a>
+            <nz-divider nzType="vertical"></nz-divider>
+            <a nz-popconfirm nzPopconfirmTitle="确认要取消吗?" (nzOnConfirm)="cancelEdit(data.id)">取消</a>
+          </ng-template>
+        </div>
+      </td>
+    </tr>
+  </tbody>
+</nz-table>
+<nz-modal
+  nzWidth="70%"
+  [nzMaskClosable]="false"
+  [(nzVisible)]="userVisible"
+  nzTitle="用户信息"
+  (nzOnCancel)="userVisible = !userVisible"
+  (nzOnOk)="addHandle()"
+>
+  <ng-container *nzModalContent>
+    <form nz-form [formGroup]="userForm">
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="name">姓名</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+          <input nz-input formControlName="name" id="name" />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="sex">性别</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+          <nz-select formControlName="sex" id="sex">
+            <nz-option nzLabel="男" nzValue="男"></nz-option>
+            <nz-option nzLabel="女" nzValue="女"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="phoneNumber">电话号码</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+          <input nz-input formControlName="phoneNumber" id="phoneNumber" [maxlength]="11" />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="idCard">身份证号</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+          <input nz-input formControlName="idCard" id="idCard" [maxlength]="18" />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="gkcs">检测频次</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+          <nz-select formControlName="gkcs" id="gkcs">
+            <nz-option *ngFor="let item of rateArr" [nzLabel]="item.name" [nzValue]="item.name"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="trades">行业</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+          <input nz-input formControlName="trades" id="trades" />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="gzdw">工作单位</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24">
+          <input nz-input formControlName="gzdw" id="gzdw" />
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container>
+</nz-modal>

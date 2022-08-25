@@ -1,0 +1,71 @@
+<nz-upload nzType="drag" [nzBeforeUpload]="beforeUpload" [nzMultiple]="true" [nzCustomRequest]="customerRequest" (nzChange)="handleChange($event)">
+  <p class="ant-upload-drag-icon">
+    <i nz-icon nzType="inbox"></i>
+  </p>
+  <p class="ant-upload-text">点击或拖拽文件到这个区域完成上传</p>
+  <p class="ant-upload-hint">支持一个或多个文件上传，仅支持excel文件上传</p>
+</nz-upload>
+<nz-card [nzTitle]="cardHeader">
+  <nz-table
+    #basicTable
+    [nzData]="dataSet"
+    [nzSize]="'small'"
+    [nzFrontPagination]="false"
+    [nzTotal]="pageObj.total"
+    [nzPageSize]="pageObj.size"
+    [(nzPageIndex)]="pageObj.page"
+    (nzPageIndexChange)="loadData()"
+  >
+    <thead>
+      <tr>
+        <th>文件名称</th>
+        <th>上传时间</th>
+        <th>数据量(条)</th>
+        <th>操作人</th>
+        <th>通知状态</th>
+        <th>文件状态</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let data of basicTable.data">
+        <td>{{ data.fileName }}</td>
+        <td>{{ data.createTime }}</td>
+        <td>{{ data.totalNum }}</td>
+        <td>{{ data.creator }}</td>
+        <td>{{ data.creator }}</td>
+        <td>
+          <ng-container *ngIf="data.state === 0">
+            <nz-tag [nzColor]="'#f50'">已删除</nz-tag>
+          </ng-container>
+          <ng-container *ngIf="data.state !== 0">
+            <nz-tag [nzColor]="'#87d068'">上传成功</nz-tag>
+          </ng-container>
+        </td>
+        <td>
+          <a *ngIf="data.state !== 0" nz-popconfirm nzPopconfirmTitle="你确定要删除此记录吗?" (nzOnConfirm)="delete(data.id)">删除</a>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+  <ng-template #list>
+    <div nz-row nzType="flex" nzJustify="space-between">
+      <div>结果展示</div>
+      <div>
+        <button nz-button nzType="primary"><i nz-icon nzType="folder" nzTheme="outline"></i>新增</button>
+        <button nz-button nzType="dashed"><i nz-icon nzType="fire" nzTheme="outline"></i>刷新</button>
+      </div>
+    </div>
+  </ng-template>
+</nz-card>
+<ng-template #cardHeader>
+  <div style="display: flex; justify-content: space-between">
+    <div>历史列表</div>
+    <div>
+      <span style="color: darkgray; font-size: 13px; margin-right: 1rem">模板会根据用户角色自动选择下载</span
+      ><button [nzLoading]="downloading" nz-button nzType="primary" (click)="downloadFile()">
+        <i nz-icon nzType="cloud-download" nzTheme="outline"></i>模板下载
+      </button>
+    </div>
+  </div>
+</ng-template>

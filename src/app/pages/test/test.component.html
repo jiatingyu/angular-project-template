@@ -1,0 +1,33 @@
+<p>test works!</p>
+
+<button (click)="toggle()">切换</button>
+<br />
+<button (click)="subscription()">订阅数据源</button>
+<button (click)="unsub()">取消订阅数据源</button>
+{{ obMsg | date: 'yyyy-MM-dd HH:mm:ss' }}
+<br />
+
+<ng-template [ngIf]="isTrue"> 你能看见我？ </ng-template><nz-divider nzType="vertical"></nz-divider>
+<a [routerLink]="['/test']">test</a> <nz-divider nzType="vertical"></nz-divider>
+<a [routerLink]="['/test', { outlets: { left: 'sector', right: null } }]">left</a> <nz-divider nzType="vertical"></nz-divider>
+<a [routerLink]="['/test', { outlets: { right: 'main' } }]">right</a> <nz-divider nzType="vertical"></nz-divider>
+<a [routerLink]="['/test', { outlets: { right: 'wait' } }]">wait</a> <nz-divider nzType="vertical"></nz-divider>
+
+<br />
+<br />
+<h4>状态管理</h4>
+<!-- <button (click)="up()">+1</button>  {{(counter | async).count}} <button (click)="down()">-1</button> -->
+<button (click)="up()">+1</button> {{ counter | async }} <button (click)="down()">-1</button>
+<br />
+<button (click)="up(5)">+5</button>{{ counter | async }} <button (click)="down(5)">-5</button>
+<br />
+<button (click)="upAsync(10)">延迟2s加10</button>{{ counter | async }}
+<router-outlet></router-outlet>
+<div nz-row>
+  <div nz-col nzSpan="12">
+    <router-outlet name="left"></router-outlet>
+  </div>
+  <div nz-col nzSpan="12">
+    <router-outlet name="right"></router-outlet>
+  </div>
+</div>

@@ -1,0 +1,50 @@
+<div class="login">
+  <img src="./assets/logo.jpg" style="margin-bottom: 2rem" />
+  <form
+    nz-form
+    [formGroup]="validateForm"
+    class="login-form"
+    (ngSubmit)="submitForm()"
+  >
+    <nz-form-item>
+      <!-- <nz-input-group nzPrefixIcon="user">
+            <input type="text" nz-input formControlName="account" placeholder="登录账号" />
+          </nz-input-group> -->
+      <nz-form-label [nzSm]="5" nzRequired nzFor="account"
+        >用户名</nz-form-label
+      >
+      <nz-form-control [nzSm]="19" nzErrorTip="请输入用户名!">
+        <input nz-input formControlName="account" id="account" />
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-label [nzSm]="5" nzRequired nzFor="password">密码</nz-form-label>
+      <nz-form-control [nzSm]="19" nzErrorTip="请输入密码!">
+        <input
+          nz-input
+          type="password"
+          formControlName="password"
+          id="password"
+        />
+      </nz-form-control>
+      <!-- <nz-input-group nzPrefixIcon="lock">
+            <input type="password" nz-input formControlName="password" placeholder="登录密码" />
+          </nz-input-group> -->
+    </nz-form-item>
+    <nz-form-item>
+      <nz-form-control>
+        <label nz-checkbox formControlName="remember">
+          <span>记住我</span>
+        </label>
+        <button
+          nz-button
+          class="login-form-button"
+          [nzType]="'primary'"
+          [nzLoading]="loading"
+        >
+          登录
+        </button>
+      </nz-form-control>
+    </nz-form-item>
+  </form>
+</div>
