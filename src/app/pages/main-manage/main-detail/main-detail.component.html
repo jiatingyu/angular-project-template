@@ -1,5 +1,5 @@
 <nz-page-header (nzBack)="onBack()" nzBackIcon>
-  <nz-page-header-title>行业人员</nz-page-header-title>
+  <nz-page-header-title>管控人员</nz-page-header-title>
   <nz-page-header-subtitle>全部人员信息列表</nz-page-header-subtitle>
   <nz-page-header-extra>
     <nz-space>
@@ -46,12 +46,13 @@
       <nz-space>
         <button *nzSpaceItem nz-button nzType="primary" (click)="search()">搜索</button>
         <button *nzSpaceItem nz-button (click)="reset()">重置</button>
-        <button *nzSpaceItem nz-button nzType="primary" (click)="add()">新增</button>
       </nz-space>
     </nz-form-control>
   </nz-form-item>
 </form>
-<ng-template #Header> 查询结果人次共计 {{ pageObj.total }} 人 </ng-template>
+<ng-template #Header>
+  查询结果人次共计 {{ pageObj.total }} 人 <button nz-button nzType="primary" (click)="add()">新增</button></ng-template
+>
 <nz-table
   #editRowTable
   nzShowSizeChanger
@@ -90,7 +91,7 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let data of editRowTable.data">
+    <tr *ngFor="let data of editRowTable.data; trackBy: trackById">
       <td nzShowCheckbox [(nzChecked)]="data.checked" (nzCheckedChange)="itemCheckedChange()"></td>
       <td>
         <ng-container *ngIf="!editCache[data.id].edit; else name">
@@ -193,63 +194,3 @@
     </tr>
   </tbody>
 </nz-table>
-<nz-modal
-  nzWidth="70%"
-  [nzMaskClosable]="false"
-  [(nzVisible)]="userVisible"
-  nzTitle="用户信息"
-  (nzOnCancel)="userVisible = !userVisible"
-  (nzOnOk)="addHandle()"
->
-  <ng-container *nzModalContent>
-    <form nz-form [formGroup]="userForm">
-      <nz-form-item>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="name">姓名</nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24">
-          <input nz-input formControlName="name" id="name" />
-        </nz-form-control>
-      </nz-form-item>
-      <nz-form-item>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="sex">性别</nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24">
-          <nz-select formControlName="sex" id="sex">
-            <nz-option nzLabel="男" nzValue="男"></nz-option>
-            <nz-option nzLabel="女" nzValue="女"></nz-option>
-          </nz-select>
-        </nz-form-control>
-      </nz-form-item>
-      <nz-form-item>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="phoneNumber">电话号码</nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24">
-          <input nz-input formControlName="phoneNumber" id="phoneNumber" [maxlength]="11" />
-        </nz-form-control>
-      </nz-form-item>
-      <nz-form-item>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="idCard">身份证号</nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24">
-          <input nz-input formControlName="idCard" id="idCard" [maxlength]="18" />
-        </nz-form-control>
-      </nz-form-item>
-      <nz-form-item>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="gkcs">检测频次</nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24">
-          <nz-select formControlName="gkcs" id="gkcs">
-            <nz-option *ngFor="let item of rateArr" [nzLabel]="item.name" [nzValue]="item.name"></nz-option>
-          </nz-select>
-        </nz-form-control>
-      </nz-form-item>
-      <nz-form-item>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="trades">行业</nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24">
-          <input nz-input formControlName="trades" id="trades" />
-        </nz-form-control>
-      </nz-form-item>
-      <nz-form-item>
-        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="gzdw">工作单位</nz-form-label>
-        <nz-form-control [nzSm]="14" [nzXs]="24">
-          <input nz-input formControlName="gzdw" id="gzdw" />
-        </nz-form-control>
-      </nz-form-item>
-    </form>
-  </ng-container>
-</nz-modal>

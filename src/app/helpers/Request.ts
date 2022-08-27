@@ -6,6 +6,7 @@ import { environment } from 'src/environments/environment'
 import { storage } from './local-storage.service'
 import { PLATFORM_ID } from '@angular/core'
 import { isPlatformBrowser, isPlatformServer } from '@angular/common'
+import { isServer } from '../utils/commonUtil'
 
 export const baseURL = typeof window === 'undefined' ? environment.url : window['env']['url']
 @Injectable({
@@ -30,6 +31,9 @@ export class Request {
       timeout: 10 * 10000,
     })
     this.request.interceptors.request.use(config => {
+      // if(isServer()){
+      console.log('config.url:', config.url)
+      // }
       if (!this.notAuthRequest.includes(config.url)) {
         let access_token = storage.get('access_token')
         access_token && (config.headers['access_token'] = access_token)

@@ -5,7 +5,8 @@ import { AuthGuard } from './guards/auth.guard'
 import { DefaultComponent } from './layout/default/default.component'
 import { PassportComponent } from './layout/passport/passport.component'
 import { AnalysisComponent } from './pages/analysis/analysis.component'
-import { MainMangeComponent } from './pages/main-mange/main-mange.component'
+import { MainDetailComponent } from './pages/main-manage/main-detail/main-detail.component'
+import { MainMangeComponent } from './pages/main-manage/main-mange.component'
 import { MessageTemplateComponent } from './pages/message-template/message-template.component'
 import { LoginComponent } from './pages/passport/login/login.component'
 import { SectorDetailComponent } from './pages/sector/sector-detail/sector-detail.component'
@@ -49,6 +50,10 @@ const routes: Routes = [
       {
         path: 'mainManage',
         component: MainMangeComponent,
+      },
+      {
+        path: 'mainManage/detail',
+        component: MainDetailComponent,
       },
       {
         path: 'waitOrigin',

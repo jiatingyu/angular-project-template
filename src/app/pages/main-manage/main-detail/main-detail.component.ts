@@ -6,8 +6,9 @@ import { DateHelper } from 'src/app/helpers/DateHelper'
 import { FileHelper } from 'src/app/helpers/FileHelper'
 import { ResultHelper } from 'src/app/helpers/ResultHelper'
 import { MainService } from 'src/app/services/main.service'
+import * as _ from 'lodash'
 interface ItemData {
-  id: string
+  id: number
   name: string
   phoneNumber: string
   idCard: string
@@ -17,7 +18,7 @@ interface ItemData {
   trades: string
   gzdw: string
   totalNum: string
-  hsPos: any[]
+  hsPos?: any[]
   yjcs: string
   jcTime: string
   addr: string
@@ -25,11 +26,11 @@ interface ItemData {
 }
 
 @Component({
-  selector: 'app-sector-detail',
-  templateUrl: './sector-detail.component.html',
-  styleUrls: ['./sector-detail.component.less'],
+  selector: 'app-main-detail',
+  templateUrl: './main-detail.component.html',
+  styleUrls: ['./main-detail.component.less'],
 })
-export class SectorDetailComponent extends ResultHelper implements OnInit {
+export class MainDetailComponent extends ResultHelper implements OnInit {
   searchForm: FormGroup
   loading = false
   constructor(
@@ -45,24 +46,36 @@ export class SectorDetailComponent extends ResultHelper implements OnInit {
   editCache: { [key: string]: { edit: boolean; data: ItemData } } = {}
   listOfData: ItemData[] = []
 
-  startEdit(id: string): void {
+  startEdit(id: number): void {
     this.editCache[id].edit = true
   }
 
-  cancelEdit(id: string): void {
+  cancelEdit(id: number): void {
     const index = this.listOfData.findIndex(item => item.id === id)
-    this.editCache[id] = {
-      data: { ...this.listOfData[index] },
-      edit: false,
+    if (id < 0) {
+      this.editCache[id] = {
+        data: { ...this.listOfData[index] },
+        edit: false,
+      }
+      this.listOfData = this.listOfData.filter(item => item.id !== id)
+    } else {
+      this.editCache[id] = {
+        data: { ...this.listOfData[index] },
+        edit: false,
+      }
     }
   }
 
-  async saveEdit(id: string) {
+  async saveEdit(id: number) {
     const index = this.listOfData.findIndex(item => item.id === id)
-    Object.assign(this.listOfData[index], this.editCache[id].data)
-    console.log(this.listOfData[index])
-    let [err] = await this.requestHelper(this.main.operationSectorDetail(this.listOfData[index]))
-    !err && (this.editCache[id].edit = false)
+    let data = _.cloneDeep(Object.assign(this.listOfData[index], this.editCache[id].data))
+    if (data.id < 0) {
+      Reflect.deleteProperty(data, id)
+    }
+    let [err] = await this.requestHelper(this.main.operationSectorDetail(data))
+    if (!err) {
+      this.listOfData = this.listOfData.filter(item => item.id !== id)
+    }
   }
 
   updateEditCache(): void {
@@ -80,15 +93,6 @@ export class SectorDetailComponent extends ResultHelper implements OnInit {
       idCard: [null],
       color: [null],
       queryDate: [null],
-    })
-    this.userForm = this.fb.group({
-      name: [null, Validators.required],
-      sex: ['男', Validators.required],
-      phoneNumber: [null, Validators.required],
-      idCard: [null, Validators.required],
-      gkcs: [null, Validators.required],
-      trades: [null, Validators.required],
-      gzdw: [null, Validators.required],
     })
     let [err, data] = await this.requestHelper(this.main.getRate(), false)
     if (!err) {
@@ -129,7 +133,7 @@ export class SectorDetailComponent extends ResultHelper implements OnInit {
   }
 
   onBack() {
-    this.router.navigateByUrl('/sector')
+    this.router.navigateByUrl('/mainManage')
   }
   isAllDisplayDataChecked = false
   isIndeterminate = false
@@ -169,16 +173,6 @@ export class SectorDetailComponent extends ResultHelper implements OnInit {
         obj.queryDate = this.dateHelper.formart(obj.queryDate, 'YYYY-MM-DD HH:mm:ss')
       }
       let data = await this.main.getSectorDetailsExport(obj)
-      // 传统做法
-      // let values = this.searchForm.value as object
-      // let params = new URLSearchParams()
-      // for (const key of Object.keys(values)) {
-      //   if (values[key]) {
-      //     params.append(key, values[key])
-      //   }
-      // }
-      // let url = baseURL + '/analysis/export?' + params.toString()
-      // console.log(url)
       this.fileHelper.downLoad(data)
     } catch (error) {
     } finally {
@@ -186,26 +180,34 @@ export class SectorDetailComponent extends ResultHelper implements OnInit {
     }
   }
 
-  // 用户信息
-  userVisible = false
-  userForm: FormGroup
   add() {
-    this.userVisible = true
+    // this.userVisible = true
+    // 行内新增
+    let id = -1 * Math.floor(Math.random() * 1000 + Math.random() * 1000)
+    console.log(id)
+    let item = {
+      id,
+      name: '',
+      checked: false,
+      phoneNumber: '',
+      idCard: '',
+      sex: '男',
+      gkcs: '',
+      trades: '',
+      gzdw: '',
+      totalNum: '',
+      yjcs: '',
+      jcTime: '',
+      addr: '',
+      color: 0,
+    }
+    this.listOfData = [item].concat(this.listOfData)
+    this.editCache[id] = {
+      edit: true,
+      data: { ...item },
+    }
   }
-  async addHandle() {
-    for (const i in this.userForm.controls) {
-      this.userForm.controls[i].markAsDirty()
-      this.userForm.controls[i].updateValueAndValidity()
-    }
-    if (this.userForm.valid) {
-      let obj = this.userForm.value
-      let [err] = await this.requestHelper(this.main.operationSectorDetail(obj))
-      if (err) {
-        this.message.error(err)
-        return
-      }
-      this.loadData()
-      this.userVisible = false
-    }
+  trackById(index, item) {
+    return item.id
   }
 }

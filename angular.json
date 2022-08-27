@@ -10,10 +10,29 @@
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
-          "style": "less"
+          "style": "less",
+          "skipTests": true
         },
         "@schematics/angular:application": {
           "strict": true
+        },
+        "@schematics/angular:class": {
+          "skipTests": true
+        },
+        "@schematics/angular:directive": {
+          "skipTests": true
+        },
+        "@schematics/angular:guard": {
+          "skipTests": true
+        },
+        "@schematics/angular:module": {
+          "skipTests": true
+        },
+        "@schematics/angular:pipe": {
+          "skipTests": true
+        },
+        "@schematics/angular:service": {
+          "skipTests": true
         }
       },
       "root": "",
@@ -38,10 +57,7 @@
                 "output": "/assets/"
               }
             ],
-            "styles": [
-              "node_modules/ng-zorro-antd/ng-zorro-antd.min.css",
-              "src/styles.less"
-            ],
+            "styles": ["node_modules/ng-zorro-antd/ng-zorro-antd.min.css", "src/styles.less"],
             "scripts": []
           },
           "configurations": {

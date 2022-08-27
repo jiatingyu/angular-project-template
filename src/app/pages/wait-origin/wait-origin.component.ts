@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core'
+import { HttpClient } from '@angular/common/http'
+import { Component, Inject, OnInit, Optional } from '@angular/core'
+import { makeStateKey, TransferState } from '@angular/platform-browser'
 import { NzMessageService } from 'ng-zorro-antd/message'
 import { NzUploadFile } from 'ng-zorro-antd/upload'
 // import { NzMessageService, UploadChangeParam, UploadFile, UploadXHRArgs } from 'ng-zorro-antd'
@@ -8,14 +10,24 @@ import { ResultHelper } from 'src/app/helpers/ResultHelper'
 import { UserType } from 'src/app/models/systems'
 import { CommonService } from 'src/app/services/common.service'
 
+import { REQUEST } from '@nguniversal/express-engine/tokens'
+import { STORE } from 'src/app/utils/StateKey'
+const KFCLIST_KEY = makeStateKey('kfcList')
 @Component({
   selector: 'app-wait-origin',
   templateUrl: './wait-origin.component.html',
   styleUrls: ['./wait-origin.component.less'],
 })
 export class WaitOriginComponent extends ResultHelper implements OnInit {
-  constructor(message: NzMessageService, private commonService: CommonService, private fileHelper: FileHelper) {
+  constructor(
+    message: NzMessageService,
+    private commonService: CommonService,
+    private fileHelper: FileHelper,
+    public http: HttpClient,
+    private state: TransferState // @Inject('TOKEN') public token: any // @Inject(REQUEST) private request: Request
+  ) {
     super(message)
+    console.log(this)
   }
   dataSet = []
   loading = false
@@ -25,8 +37,20 @@ export class WaitOriginComponent extends ResultHelper implements OnInit {
     size: 10,
     total: 0,
   }
+  todosData = []
   ngOnInit() {
     this.loadData()
+    const kfcList: any[] = this.state.get(KFCLIST_KEY, null as any)
+    if (!kfcList) {
+      // 请求设置
+      this.http.get('https://jsonplaceholder.typicode.com/todos').subscribe((v: any) => {
+        console.log('发送请求成功。。。')
+        this.todosData = v
+        this.state.set(KFCLIST_KEY, v as any) // 存储数据
+      })
+    } else {
+      this.todosData = kfcList
+    }
   }
   beforeUpload = (file: NzUploadFile, fileList: NzUploadFile[]): boolean => {
     console.log(file, fileList)

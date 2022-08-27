@@ -5,3 +5,4 @@ export const increment_async = createAction('increment_async', props<{ num: numb
 export const increment_num = createAction('increment_num', props<{ num: number }>())
 export const decrement = createAction('decrement')
 export const decrement_num = createAction('decrement_num', props<{ num: number }>())
+export const Init = createAction('init', props<any>())

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core'
+import { Component, Inject, OnInit } from '@angular/core'
 import { select, State, Store } from '@ngrx/store'
 import {
   BehaviorSubject,
@@ -44,6 +44,8 @@ import {
   throttleTime,
   toArray,
 } from 'rxjs/operators'
+import { ClientInit } from 'src/app/helpers/Clientinit'
+import { Token } from 'src/app/helpers/Token'
 import { AppState } from 'src/app/store'
 import { decrement, decrement_num, increment, increment_async, increment_num } from 'src/app/store/actions/counter.actions'
 import { CounterState } from 'src/app/store/reducers/counter.reducer'
@@ -56,7 +58,10 @@ import { selectQueryParams, selectRouteParam, selectRouteParams } from 'src/app/
   styleUrls: ['./test.component.less'],
 })
 export class TestComponent implements OnInit {
-  constructor(private store: Store<AppState>) {}
+  constructor(private store: Store<AppState>, private token: Token, @Inject('init') private init: ClientInit) {
+    console.log('token name:', this.token.name)
+    console.log('this.store:', this.init.myStore)
+  }
   counter: Observable<number>
   obMsg = new Date()
   sub: Subscription = null

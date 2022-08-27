@@ -40,7 +40,14 @@
     <div nz-row nzType="flex" nzJustify="space-between">
       <div>{{ dateFormart() }}-结果展示</div>
       <div>
-        <button nz-button nzType="primary" (click)="loadData()"><i nz-icon nzType="fire" nzTheme="outline"></i>刷新</button>
+        <nz-space>
+          <button *nzSpaceItem nz-button nzType="primary" (click)="loadData()">
+            <i nz-icon nzType="fire" nzTheme="outline"></i>刷新
+          </button>
+          <button *nzSpaceItem nz-button nzType="primary" (click)="checkUsers()">
+            <i nz-icon nzType="contacts" nzTheme="outline"></i>查看全部人员信息
+          </button>
+        </nz-space>
       </div>
     </div>
   </ng-template>
