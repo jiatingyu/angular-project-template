@@ -1,20 +1,18 @@
 import { NgModule } from '@angular/core'
 import { Routes, RouterModule } from '@angular/router'
-import { AppComponent } from './app.component'
 import { AuthGuard } from './guards/auth.guard'
 import { DefaultComponent } from './layout/default/default.component'
 import { PassportComponent } from './layout/passport/passport.component'
 import { AnalysisComponent } from './pages/analysis/analysis.component'
+import { HazardAreaComponent } from './pages/main-manage/hazard-area/hazard-area.component'
 import { MainDetailComponent } from './pages/main-manage/main-detail/main-detail.component'
 import { MainMangeComponent } from './pages/main-manage/main-mange.component'
 import { MessageTemplateComponent } from './pages/message-template/message-template.component'
 import { LoginComponent } from './pages/passport/login/login.component'
+import { RegisterSuccessComponent } from './pages/passport/register/register-success/register-success.component'
+import { RegisterComponent } from './pages/passport/register/register.component'
 import { SectorDetailComponent } from './pages/sector/sector-detail/sector-detail.component'
 import { SectorComponent } from './pages/sector/sector.component'
-import { PersonComponent } from './pages/system-manage/person/person.component'
-import { ResourceComponent } from './pages/system-manage/resource/resource.component'
-import { RoleComponent } from './pages/system-manage/role/role.component'
-import { UserComponent } from './pages/system-manage/user/user.component'
 import { TestComponent } from './pages/test/test.component'
 import { WaitOriginComponent } from './pages/wait-origin/wait-origin.component'
 
@@ -52,6 +50,10 @@ const routes: Routes = [
         component: MainMangeComponent,
       },
       {
+        path: 'mainManage/hazard',
+        component: HazardAreaComponent,
+      },
+      {
         path: 'mainManage/detail',
         component: MainDetailComponent,
       },
@@ -74,6 +76,14 @@ const routes: Routes = [
   {
     path: 'analysis',
     component: AnalysisComponent,
+  },
+  {
+    path: 'register',
+    component: RegisterComponent,
+  },
+  {
+    path: 'register/success',
+    component: RegisterSuccessComponent,
   },
   {
     path: 'test',

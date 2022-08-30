@@ -32,7 +32,10 @@ import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions'
 // import { NzButtonModule } from 'ng-zorro-antd/button'
 import { UserTypePipe } from '../pipes/user-type.pipe'
 import { RoleNamePipe } from '../pipes/role-name.pipe'
-
+import { NzDrawerModule } from 'ng-zorro-antd/drawer'
+import { NzSegmentedModule } from 'ng-zorro-antd/segmented'
+import { NzRadioModule } from 'ng-zorro-antd/radio'
+import { NzResultModule } from 'ng-zorro-antd/result'
 const commonNgZorror = [
   NzButtonModule,
   NzFormModule,
@@ -62,6 +65,10 @@ const commonNgZorror = [
   NzPopoverModule,
   NzAvatarModule,
   NzDescriptionsModule,
+  NzDrawerModule,
+  NzSegmentedModule,
+  NzRadioModule,
+  NzResultModule,
 ]
 
 @NgModule({

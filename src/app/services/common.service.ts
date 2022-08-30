@@ -27,6 +27,13 @@ export class CommonService {
       },
     })
   }
+  uploadImage(data) {
+    return this.request.post('/upload/image', data, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+  }
   // 下载文件
   downloadFile() {
     return this.request.get('/upload', {

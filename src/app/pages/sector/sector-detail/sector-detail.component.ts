@@ -6,6 +6,7 @@ import { DateHelper } from 'src/app/helpers/DateHelper'
 import { FileHelper } from 'src/app/helpers/FileHelper'
 import { ResultHelper } from 'src/app/helpers/ResultHelper'
 import { MainService } from 'src/app/services/main.service'
+import * as _ from 'lodash'
 interface ItemData {
   id: string
   name: string
@@ -22,6 +23,7 @@ interface ItemData {
   jcTime: string
   addr: string
   color: number
+  remark: string
 }
 
 @Component({
@@ -79,7 +81,9 @@ export class SectorDetailComponent extends ResultHelper implements OnInit {
       name: [null],
       idCard: [null],
       color: [null],
-      queryDate: [null],
+      date: [null],
+      trades: [null],
+      gzdw: [null],
     })
     this.userForm = this.fb.group({
       name: [null, Validators.required],
@@ -112,9 +116,11 @@ export class SectorDetailComponent extends ResultHelper implements OnInit {
     this.loading = true
     try {
       let obj = this.searchForm.value
-      let params = { ...obj, ...{ page: this.pageObj.page, size: this.pageObj.size } }
-      if (obj.queryDate) {
-        params.queryDate = this.dateHelper.formart(obj.queryDate, 'YYYY-MM-DD HH:mm:ss')
+      let params = _.cloneDeep({ ...obj, ...{ page: this.pageObj.page, size: this.pageObj.size } })
+      if (params.date) {
+        params.queryDate = this.dateHelper.formart(params.date[0], 'YYYY-MM-DD HH:mm:ss')
+        params.queryEndDate = this.dateHelper.formart(params.date[1], 'YYYY-MM-DD HH:mm:ss')
+        Reflect.deleteProperty(params, 'date')
       }
       let [err, list] = await this.requestHelper(this.main.getSectorDetails(params))
       if (!err) {

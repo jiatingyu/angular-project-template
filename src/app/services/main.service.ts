@@ -73,4 +73,30 @@ export class MainService {
   async postMsg(data) {
     return this.request.post('/sms', data)
   }
+
+  // --- 重点人员
+  async userRegister(data) {
+    return this.request.post('/zdry/anon', data)
+  }
+
+  // hazard 地区
+
+  async getHazards(data) {
+    return this.request.get('/fxdq', data)
+  }
+  async getHazard(params) {
+    return this.request.get('/fxdq', {
+      params,
+    })
+  }
+  async operationHazards(data) {
+    return this.request({
+      url: '/fxdq',
+      method: data.id ? 'put' : 'post',
+      data,
+    })
+  }
+  async deleteHazards(id: number) {
+    return this.request.delete(`/fxdq/${id}`)
+  }
 }

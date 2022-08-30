@@ -32,13 +32,27 @@
         <nz-option nzLabel="正常" [nzValue]="1"></nz-option>
         <nz-option nzLabel="待检测" [nzValue]="2"></nz-option>
         <nz-option nzLabel="警告" [nzValue]="3"></nz-option>
+        <nz-option nzLabel="其他" [nzValue]="4"></nz-option>
       </nz-select>
     </nz-form-control>
   </nz-form-item>
   <nz-form-item>
     <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="queryDate">时间</nz-form-label>
+    <nz-form-control [nzSm]="18" [nzXs]="24">
+      <!-- <nz-date-picker formControlName="queryDate"></nz-date-picker> -->
+      <nz-range-picker formControlName="date"></nz-range-picker>
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="trades">行业</nz-form-label>
     <nz-form-control [nzSm]="14" [nzXs]="24">
-      <nz-date-picker formControlName="queryDate"></nz-date-picker>
+      <input nz-input formControlName="trades" id="trades" />
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="gzdw">工作单位</nz-form-label>
+    <nz-form-control [nzSm]="14" [nzXs]="24">
+      <input nz-input formControlName="gzdw" id="gzdw" />
     </nz-form-control>
   </nz-form-item>
   <nz-form-item>
@@ -83,9 +97,10 @@
       <th nzWidth="7%">检测频次</th>
       <th nzWidth="6%">行业</th>
       <th nzWidth="18%">工作单位</th>
-      <th nzWidth="8%">实检次数</th>
-      <th nzWidth="8%">应检次数</th>
-      <th nzWidth="8%">状态</th>
+      <th nzWidth="6%">实检数</th>
+      <th nzWidth="6%">应检数</th>
+      <th nzWidth="6%">状态</th>
+      <th nzWidth="8%">备注</th>
       <th>操作</th>
     </tr>
   </thead>
@@ -162,8 +177,10 @@
       <td>
         {{ data.yjcs }}
       </td>
+
       <td>
         <ng-container *ngIf="!editCache[data.id].edit; else color">
+          <nz-tag *ngIf="data?.color === 4" [nzColor]="'#556B2F'">其他</nz-tag>
           <nz-tag *ngIf="data?.color === 3" [nzColor]="'#f50'">警告</nz-tag>
           <nz-tag *ngIf="data?.color === 2" [nzColor]="'#FFB90F'">待检测</nz-tag>
           <nz-tag *ngIf="data?.color === 1" [nzColor]="'#87d068'">正常</nz-tag>
@@ -173,7 +190,16 @@
             <nz-option nzLabel="正常" [nzValue]="1"></nz-option>
             <nz-option nzLabel="待检测" [nzValue]="2"></nz-option>
             <nz-option nzLabel="警告" [nzValue]="3"></nz-option>
+            <nz-option nzLabel="其他" [nzValue]="4"></nz-option>
           </nz-select>
+        </ng-template>
+      </td>
+      <td>
+        <ng-container *ngIf="!editCache[data.id].edit; else remark">
+          {{ data.remark }}
+        </ng-container>
+        <ng-template #remark>
+          <input type="text" nz-input [(ngModel)]="editCache[data.id].data.remark" />
         </ng-template>
       </td>
       <td>

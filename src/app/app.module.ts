@@ -32,6 +32,10 @@ import { TransferHttpCacheModule } from '@nguniversal/common'
 import { ClientInit } from './helpers/Clientinit'
 import { STORE } from './utils/StateKey'
 import { Init } from './store/actions/counter.actions'
+import { RegisterComponent } from './pages/passport/register/register.component';
+import { CardUploadComponent } from './components/card-upload/card-upload.component';
+import { RegisterSuccessComponent } from './pages/passport/register/register-success/register-success.component';
+import { HazardAreaComponent } from './pages/main-manage/hazard-area/hazard-area.component'
 registerLocaleData(zh)
 
 @NgModule({
@@ -48,6 +52,10 @@ registerLocaleData(zh)
     TestComponent,
     SectorDetailComponent,
     MainDetailComponent,
+    RegisterComponent,
+    CardUploadComponent,
+    RegisterSuccessComponent,
+    HazardAreaComponent,
   ],
   imports: [
     // BrowserModule,
@@ -80,7 +88,9 @@ export class AppModule {
       const state = this.state.get<AppState>(STORE, null)
       this.state.remove(STORE)
       console.log('state:', state)
-      this.store.dispatch(Init(state.counter))
+      if (state) {
+        this.store.dispatch(Init(state.counter))
+      }
     } else {
       this.state.onSerialize(STORE, () => {
         let state

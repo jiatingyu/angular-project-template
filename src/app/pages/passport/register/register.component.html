@@ -1,0 +1,164 @@
+<!-- 用户手机端进行申报 -->
+<!--  https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx8b38ba416a7eaaa3&redirect_uri=http://qwhs.cdyibei.com/bk/wx/auth&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect -->
+<div nz-row class="wrap">
+  <div class="header">
+    <h2>来（返）犍人员专用二维码</h2>
+    <span>匿名</span>
+    <div>请务必认真填写一下信息</div>
+  </div>
+  <div class="form"></div>
+  <form nz-form [formGroup]="validateForm">
+    <nz-form-item id="_tbdz">
+      <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="tbdz">1.填报地址</nz-form-label>
+      <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="此项为必填项，请输入!">
+        <nz-radio-group formControlName="tbdz">
+          <label nz-radio class="addr" nzValue="犍为北">犍为北</label>
+          <label nz-radio class="addr" nzValue="犍为南">犍为南</label>
+          <label nz-radio class="addr" nzValue="寿保高铁站">寿保高铁站</label>
+          <label nz-radio class="addr" nzValue="罗城卡口">罗城卡口</label>
+          <label nz-radio class="addr" nzValue="孝姑卡口">孝姑卡口</label>
+          <label nz-radio class="addr" nzValue="新民卡口">新民卡口</label>
+          <label nz-radio class="addr" nzValue="玉屏卡口">玉屏卡口</label>
+          <label nz-radio class="addr" nzValue="九井卡口">九井卡口</label>
+          <label nz-radio class="addr" nzValue="犍为东">犍为东</label>
+          <label nz-radio class="addr" nzValue="航运码头">航运码头</label>
+          <label nz-radio class="addr" nzValue="213国道卡口">213国道卡口</label>
+          <label nz-radio class="addr" nzValue="五犍沐卡口">五犍沐卡口</label>
+        </nz-radio-group>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item id="_name">
+      <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="name" nzRequired>2.姓名</nz-form-label>
+      <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="此项为必填项，请输入!">
+        <input
+          nz-input
+          type="name"
+          autoComplete="off"
+          id="name"
+          formControlName="name"
+          (ngModelChange)="updateConfirmValidator()"
+        />
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item id="_idCard">
+      <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="idCard" nzRequired>3.身份证号</nz-form-label>
+      <nz-form-control [nzSm]="14" [nzXs]="24" [nzErrorTip]="errorTpl">
+        <input nz-input maxlength="18" autocomplete="new-password" formControlName="idCard" id="idCard" />
+        <ng-template #errorTpl let-control>
+          <ng-container *ngIf="control.hasError('required')">此项为必填项，请输入!</ng-container>
+          <ng-container *ngIf="control.hasError('message')">{{ control.errors.message }}</ng-container>
+        </ng-template>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item id="_phoneNumber">
+      <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="phoneNumber" nzRequired>
+        <span>4.手机号</span>
+      </nz-form-label>
+      <nz-form-control [nzSm]="14" [nzXs]="24" [nzErrorTip]="phoneError">
+        <input nz-input id="phoneNumber" maxlength="11" formControlName="phoneNumber" />
+      </nz-form-control>
+      <ng-template #phoneError let-control>
+        <ng-container *ngIf="control.hasError('required')">此项为必填项，请输入!</ng-container>
+        <ng-container *ngIf="control.hasError('message')">{{ control.errors.message }}</ng-container>
+      </ng-template>
+    </nz-form-item>
+    <nz-form-item id="_jkmys">
+      <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="jkmys" nzRequired>5.健康码信息</nz-form-label>
+      <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="此项为必填项，请输入!">
+        <nz-select formControlName="jkmys" sytle="widht:70%">
+          <nz-option nzLabel="绿码" nzValue="绿码"></nz-option>
+          <nz-option nzLabel="黄码" nzValue="黄码"></nz-option>
+          <nz-option nzLabel="红码" nzValue="红码"></nz-option>
+          <nz-option nzLabel="应急黄码" nzValue="应急黄码"></nz-option>
+          <nz-option nzLabel="入川码弹窗信息（请尽快完成一次核酸）" nzValue="入川码弹窗信息（请尽快完成一次核酸）"></nz-option>
+          <nz-option nzLabel="其他" nzValue="其他"></nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item id="_mdd">
+      <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="mdd" nzRequired>6.此行目的地</nz-form-label>
+      <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="此项为必填项，请输入!" [nzExtra]="extra">
+        <input nz-input id="mdd" (click)="openpcas()" formControlName="mdd" placeholder="此行目的地" />
+        <ng-template #extra>
+          <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="此项为必填项，请输入!">
+            <input nz-input placeholder="详细地址" formControlName="mddDetail" />
+          </nz-form-control>
+        </ng-template>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item id="_xck">
+      <nz-form-label
+        [nzSm]="6"
+        [nzXs]="24"
+        nzFor="xck"
+        nzRequired
+        nzTooltipTitle="此项为必填项，请输入!"
+        [nzTooltipIcon]="captchaTooltipIcon"
+      >
+        7.行程卡识别
+      </nz-form-label>
+      <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="此项为必填项，请输入!" [nzExtra]="xckTmp">
+        <app-card-upload [length]="1" formControlName="xckObj"></app-card-upload>
+        <ng-template #xckTmp>
+          <div *ngIf="!validateForm.get('xckObj').valid">上传一张最新的行程卡</div>
+          <div *ngIf="validateForm.get('xckObj').valid">
+            <div class="xck">
+              <div>日期</div>
+              <div>途径城市</div>
+              <!-- <div>码色</div>
+              <div></div> -->
+              <div>{{ validateForm.get('xckObj').value?.xcksj }}</div>
+              <div>{{ validateForm.get('xckObj').value?.xcksb }}</div>
+            </div>
+          </div>
+        </ng-template>
+      </nz-form-control>
+      <!-- </nz-form-control> -->
+    </nz-form-item>
+    <nz-form-item id="_dqsy">
+      <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="dqsy" nzRequired>8.到犍事由</nz-form-label>
+      <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="此项为必填项，请输入!">
+        <nz-select formControlName="dqsy" sytle="widht:70%">
+          <nz-option nzLabel="返乡、回家、探亲" nzValue="返乡、回家、探亲"></nz-option>
+          <nz-option nzLabel="过境" nzValue="过境"></nz-option>
+          <nz-option nzLabel="送货、装货" nzValue="送货、装货"></nz-option>
+          <nz-option nzLabel="旅游、办事、出差等" nzValue="旅游、办事、出差等"></nz-option>
+        </nz-select>
+      </nz-form-control>
+    </nz-form-item>
+    <nz-form-item id="_zqqr">
+      <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="zqqr" nzRequired>9.知情确认</nz-form-label>
+      <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="此项为必填项，请输入!">
+        <label nz-radio formControlName="zqqr">确认以上填写信息属实，并严格遵守当地疫情防控相关规定。</label>
+      </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item nz-row class="register-area">
+      <nz-form-control [nzSpan]="24" [nzOffset]="">
+        <button nz-button nzType="primary" class="handle" (click)="submitForm()">提交</button>
+        <button nz-button style="margin-top: 1rem" class="handle" (click)="saveDraft()">保存草稿</button>
+      </nz-form-control>
+    </nz-form-item>
+  </form>
+</div>
+<nz-drawer
+  [nzVisible]="pcasVisible"
+  nzPlacement="bottom"
+  nzTitle="省市区县镇选择"
+  [nzSize]="'large'"
+  (nzOnClose)="pcasVisible = false"
+  [nzFooter]="footerTpl"
+>
+  <ng-container *nzDrawerContent>
+    <div style="position: sticky; top: -24px; background: white">
+      <nz-segmented [nzOptions]="pcasOptions" [(ngModel)]="pcasIndex" (ngModelChange)="handleModelChange($event)"></nz-segmented>
+    </div>
+    <div *ngFor="let item of pcasList" (click)="nextPrac(item)" class="line">{{ item }}</div>
+  </ng-container>
+  <ng-template #footerTpl>
+    <div style="float: right">
+      <button nz-button style="margin-right: 8px" (click)="pcasVisible = false">取消</button>
+      <button nz-button nzType="primary" [disabled]="pcasOptions.length !== 4" (click)="pcasOk()">确认</button>
+    </div>
+  </ng-template>
+</nz-drawer>

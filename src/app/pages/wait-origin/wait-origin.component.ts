@@ -40,17 +40,17 @@ export class WaitOriginComponent extends ResultHelper implements OnInit {
   todosData = []
   ngOnInit() {
     this.loadData()
-    const kfcList: any[] = this.state.get(KFCLIST_KEY, null as any)
-    if (!kfcList) {
-      // 请求设置
-      this.http.get('https://jsonplaceholder.typicode.com/todos').subscribe((v: any) => {
-        console.log('发送请求成功。。。')
-        this.todosData = v
-        this.state.set(KFCLIST_KEY, v as any) // 存储数据
-      })
-    } else {
-      this.todosData = kfcList
-    }
+    // const kfcList: any[] = this.state.get(KFCLIST_KEY, null as any)
+    // if (!kfcList) {
+    //   // 请求设置
+    //   this.http.get('https://jsonplaceholder.typicode.com/todos').subscribe((v: any) => {
+    //     console.log('发送请求成功。。。')
+    //     this.todosData = v
+    //     this.state.set(KFCLIST_KEY, v as any) // 存储数据
+    //   })
+    // } else {
+    //   this.todosData = kfcList
+    // }
   }
   beforeUpload = (file: NzUploadFile, fileList: NzUploadFile[]): boolean => {
     console.log(file, fileList)
