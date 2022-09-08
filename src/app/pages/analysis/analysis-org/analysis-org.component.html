@@ -1,0 +1,25 @@
+<form nz-form [formGroup]="searchForm" [nzLayout]="'inline'">
+  <nz-form-item>
+    <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="account">筛选时间</nz-form-label>
+    <nz-form-control [nzSm]="18" [nzXs]="24">
+      <nz-range-picker formControlName="date"></nz-range-picker>
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-control>
+      <button nz-button nzType="primary" (click)="loadData()">搜索</button>
+    </nz-form-control>
+  </nz-form-item>
+</form>
+
+<nz-card [nzTitle]="'统计结果'">
+  <nz-row [nzGutter]="16" *ngIf="dataSet.length; else empty">
+    <nz-col [nzSpan]="8" *ngFor="let item of dataSet">
+      <nz-statistic [nzValue]="(item.jcsl | number)!" [nzTitle]="item.jgmc" [nzPrefix]="prefixTpl"></nz-statistic>
+      <ng-template #prefixTpl><span nz-icon nzType="like"></span></ng-template>
+    </nz-col>
+  </nz-row>
+  <ng-template #empty>
+    <nz-empty nzNotFoundImage="simple"></nz-empty>
+  </ng-template>
+</nz-card>

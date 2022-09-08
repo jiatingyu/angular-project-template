@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core'
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
-import { Router } from '@angular/router'
+import { ActivatedRoute, Router } from '@angular/router'
 // import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 
 import { NzFormTooltipIcon } from 'ng-zorro-antd/form'
@@ -30,32 +30,39 @@ export class RegisterComponent extends ResultHelper implements OnInit {
     type: 'info-circle',
     theme: 'twotone',
   }
-
+  submitLoading = false
   async submitForm() {
-    if (this.validateForm.valid) {
-      let obj = this.validateForm.value
-      obj['rqmdd'] = obj.mdd + '' + obj.mddDetail
-      obj['xck'] = obj.xckObj.xck
-      obj['xcksj'] = obj.xckObj.xcksj
-      obj['xcksb'] = obj.xckObj.xcksb
-      console.log('submit', this.validateForm.value)
-      let [err] = await this.requestHelper(this.main.userRegister(this.validateForm.value))
-      if (!err) {
-        this.router.navigate(['/register/success'])
-      }
-    } else {
-      let first = false
-      for (const i in this.validateForm.controls) {
-        if (this.validateForm.controls[i].invalid) {
-          if (!first) {
-            first = true
-            let el = document.getElementById('_' + i)
-            el && el.scrollIntoView()
+    try {
+      this.submitLoading = true
+      if (this.validateForm.valid) {
+        let obj = this.validateForm.value
+        obj['rqmdd'] = obj.mdd + '' + obj.mddDetail
+        obj['xck'] = obj.xckObj.xck
+        obj['xcksj'] = obj.xckObj.xcksj
+        obj['xcksb'] = obj.xckObj.xcksb
+        obj['openid'] = this.openid
+        console.log('submit', this.validateForm.value)
+        let [err] = await this.requestHelper(this.main.userRegister(this.validateForm.value))
+        if (!err) {
+          this.router.navigate(['/register/success'])
+        }
+      } else {
+        let first = false
+        for (const i in this.validateForm.controls) {
+          if (this.validateForm.controls[i].invalid) {
+            if (!first) {
+              first = true
+              let el = document.getElementById('_' + i)
+              el && el.scrollIntoView()
+            }
+            this.validateForm.controls[i].markAsDirty()
+            this.validateForm.controls[i].updateValueAndValidity()
           }
-          this.validateForm.controls[i].markAsDirty()
-          this.validateForm.controls[i].updateValueAndValidity()
         }
       }
+    } catch (error) {
+    } finally {
+      this.submitLoading = false
     }
   }
 
@@ -82,12 +89,13 @@ export class RegisterComponent extends ResultHelper implements OnInit {
     message: NzMessageService,
     private dateHelper: DateHelper,
     private router: Router,
+    private active: ActivatedRoute,
     private main: MainService,
     private modal: NzModalService
   ) {
     super(message)
   }
-
+  openid = ''
   ngOnInit(): void {
     this.validateForm = this.fb.group({
       tbdz: [null, [Validators.required]],
@@ -105,6 +113,10 @@ export class RegisterComponent extends ResultHelper implements OnInit {
     })
     console.log(this.validateForm)
     if (!isServer()) {
+      let params = this.active.snapshot.queryParams
+      if (params) {
+        this.openid = params['openid'] || ''
+      }
       let registerData = JSON.parse(window.localStorage.getItem('registerData') || null)
       if (registerData) {
         // 提示用户

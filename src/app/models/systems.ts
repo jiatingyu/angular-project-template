@@ -37,6 +37,8 @@ interface IUserInfo {
   userName: string
   userType: number
   roleVo?: IRole
+  deptId?: number
+  deptVo?: number
 }
 
 interface IUser {

@@ -4,6 +4,7 @@ import { DepartmentComponent } from './department/department.component'
 import { PersonComponent } from './person/person.component'
 import { ResourceComponent } from './resource/resource.component'
 import { RoleComponent } from './role/role.component'
+import { RuleSetComponent } from './rule-set/rule-set.component'
 import { UserComponent } from './user/user.component'
 
 const routes: Routes = [
@@ -26,6 +27,10 @@ const routes: Routes = [
   {
     path: 'department',
     component: DepartmentComponent,
+  },
+  {
+    path: 'rule',
+    component: RuleSetComponent,
   },
 ]
 

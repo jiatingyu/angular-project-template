@@ -3,7 +3,10 @@ import { Routes, RouterModule } from '@angular/router'
 import { AuthGuard } from './guards/auth.guard'
 import { DefaultComponent } from './layout/default/default.component'
 import { PassportComponent } from './layout/passport/passport.component'
+import { AnalysisOrgComponent } from './pages/analysis/analysis-org/analysis-org.component'
 import { AnalysisComponent } from './pages/analysis/analysis.component'
+import { FlowCreateComponent } from './pages/flow/flow-create/flow-create.component'
+import { FlowOperationComponent } from './pages/flow/flow-operation/flow-operation.component'
 import { HazardAreaComponent } from './pages/main-manage/hazard-area/hazard-area.component'
 import { MainDetailComponent } from './pages/main-manage/main-detail/main-detail.component'
 import { MainMangeComponent } from './pages/main-manage/main-mange.component'
@@ -70,6 +73,18 @@ const routes: Routes = [
       {
         path: 'messageTemplate',
         component: MessageTemplateComponent,
+      },
+      {
+        path: 'analysisOrg',
+        component: AnalysisOrgComponent,
+      },
+      {
+        path: 'flow-create',
+        component: FlowCreateComponent,
+      },
+      {
+        path: 'flow-operation',
+        component: FlowOperationComponent,
       },
     ],
   },

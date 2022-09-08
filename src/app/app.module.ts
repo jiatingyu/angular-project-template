@@ -35,7 +35,10 @@ import { Init } from './store/actions/counter.actions'
 import { RegisterComponent } from './pages/passport/register/register.component';
 import { CardUploadComponent } from './components/card-upload/card-upload.component';
 import { RegisterSuccessComponent } from './pages/passport/register/register-success/register-success.component';
-import { HazardAreaComponent } from './pages/main-manage/hazard-area/hazard-area.component'
+import { HazardAreaComponent } from './pages/main-manage/hazard-area/hazard-area.component';
+import { AnalysisOrgComponent } from './pages/analysis/analysis-org/analysis-org.component';
+import { FlowCreateComponent } from './pages/flow/flow-create/flow-create.component';
+import { FlowOperationComponent } from './pages/flow/flow-operation/flow-operation.component'
 registerLocaleData(zh)
 
 @NgModule({
@@ -56,6 +59,9 @@ registerLocaleData(zh)
     CardUploadComponent,
     RegisterSuccessComponent,
     HazardAreaComponent,
+    AnalysisOrgComponent,
+    FlowCreateComponent,
+    FlowOperationComponent,
   ],
   imports: [
     // BrowserModule,

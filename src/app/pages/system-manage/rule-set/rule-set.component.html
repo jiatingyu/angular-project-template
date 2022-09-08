@@ -1,0 +1,81 @@
+<nz-card [nzTitle]="list">
+  <nz-table #expandTable [nzData]="listOfMapData" [nzLoading]="resourceLoading">
+    <thead>
+      <tr>
+        <th>名称</th>
+        <th>规则</th>
+        <th>部门简介</th>
+        <th>更新时间</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of expandTable.data">
+        <td>
+          {{ item.name }}
+        </td>
+        <td>{{ item.cron }}</td>
+        <td>{{ item.description }}</td>
+        <td>{{ item.createTime }}</td>
+        <td>
+          <a (click)="edit(item, $event)">编辑</a>
+          <nz-divider nzType="vertical"></nz-divider>
+          <a nz-popconfirm nzPopconfirmTitle="你确定要删除此记录吗?" (nzOnConfirm)="delete(item.id)">删除</a>
+        </td>
+      </tr>
+    </tbody>
+  </nz-table>
+</nz-card>
+<ng-template #list>
+  <div nz-row nzType="flex" nzJustify="space-between">
+    <div>结果展示</div>
+    <div>
+      <button nz-button nzType="primary" (click)="add()"><i nz-icon nzType="folder" nzTheme="outline"></i>新增</button>
+      <button nz-button nzType="dashed" (click)="loadData()"><i nz-icon nzType="fire" nzTheme="outline"></i>刷新</button>
+    </div>
+  </div>
+</ng-template>
+
+<nz-modal
+  nzWidth="70%"
+  [nzMaskClosable]="false"
+  [(nzVisible)]="resourceVisible"
+  nzTitle="资源信息"
+  (nzOnCancel)="resourceVisible = !resourceVisible"
+  (nzOnOk)="addHandle()"
+>
+  <ng-container *nzModalContent>
+    <form nz-form [formGroup]="validateForm">
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="name" nzRequired>名称</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="此项为必填项">
+          <input nz-input formControlName="name" id="name" />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="day">几天</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="此项为必填项">
+          <input nz-input formControlName="day" id="day" />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="num">几次</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="此项为必填项">
+          <input nz-input formControlName="num" id="num" />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="time">间隔时长</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="此项为必填项">
+          <input nz-input formControlName="time" id="time" />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzRequired nzFor="description">简介</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="此项为必填项">
+          <input nz-input formControlName="description" id="description" />
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container>
+</nz-modal>

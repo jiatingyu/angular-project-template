@@ -1,17 +1,19 @@
 import { Component, OnInit } from '@angular/core'
 import { FormBuilder, FormGroup, Validators } from '@angular/forms'
 import { NzMessageService } from 'ng-zorro-antd/message'
+import { getCurrentUser } from 'src/app/helpers/local-storage.service'
 import { ResultHelper } from 'src/app/helpers/ResultHelper'
 import { SystemHelper, TreeNodeInterface } from 'src/app/helpers/SystemHelper'
 import { IResource } from 'src/app/models/systems'
+import { MainService } from 'src/app/services/main.service'
 import { SystemService } from 'src/app/services/system.service'
 
 @Component({
-  selector: 'app-department',
-  templateUrl: './department.component.html',
-  styleUrls: ['./department.component.less'],
+  selector: 'app-rule-set',
+  templateUrl: './rule-set.component.html',
+  styleUrls: ['./rule-set.component.less'],
 })
-export class DepartmentComponent extends ResultHelper implements OnInit {
+export class RuleSetComponent extends ResultHelper implements OnInit {
   resourceLoading: boolean = false
   validateForm: FormGroup
   resourceVisible: boolean = false
@@ -20,6 +22,7 @@ export class DepartmentComponent extends ResultHelper implements OnInit {
   constructor(
     private fb: FormBuilder,
     private system: SystemService,
+    private main: MainService,
     message: NzMessageService,
     private systemHelper: SystemHelper
   ) {
@@ -28,23 +31,19 @@ export class DepartmentComponent extends ResultHelper implements OnInit {
   submitForm() {}
   ngOnInit() {
     this.validateForm = this.fb.group({
-      parentId: [],
       name: [null, Validators.required],
-      description: [],
+      day: [null, Validators.required],
+      num: [null, Validators.required],
+      time: [null, Validators.required],
+      description: [null, Validators.required],
     })
     this.loadData()
   }
   async loadData() {
     this.resourceLoading = true
     try {
-      let { data } = await this.system.getDetapartments()
-      this.listOfMapData = this.systemHelper.cascadeResource(data.content || [])
-      // 数据变成级联结构
-
-      this.parentResources = (data.content || []).map(item => ({ id: item.id, name: item.name }))
-      this.listOfMapData.forEach(item => {
-        this.mapOfExpandedData[item.id] = this.systemHelper.convertTreeToList(item)
-      })
+      let [err, data] = await this.requestHelper(this.main.getConfig())
+      this.listOfMapData = data
     } catch (error) {
       console.dir(error)
     } finally {
@@ -52,28 +51,24 @@ export class DepartmentComponent extends ResultHelper implements OnInit {
     }
   }
 
-  selectedRow = { id: 0, name: '' }
-  selectRow(row) {
-    // if (row.level === 0) {
-    if (this.selectedRow.id === row.id) {
-      this.selectedRow = { id: 0, name: '' }
-    } else {
-      this.selectedRow = row
-    }
-    // }
-  }
   editObj = null
   edit(item, e: Event) {
     this.editObj = item
     e.preventDefault()
-    this.validateForm.get('parentId').setValue(item.parentId || null)
+    let arr = item.cron.split(',')
+    let day = arr[0].match(/(\d+)/)[0]
+    let num = arr[1].match(/(\d+)/)[0]
+    let time = arr[2].match(/(\d+)/)[0]
     this.validateForm.get('name').setValue(item.name || null)
+    this.validateForm.get('day').setValue(day || null)
+    this.validateForm.get('num').setValue(num || null)
+    this.validateForm.get('time').setValue(time || null)
     this.validateForm.get('description').setValue(item.description || null)
     this.resourceVisible = true
   }
   add() {
     this.editObj = null
-    this.validateForm.get('parentId').setValue(this.selectedRow.id || null)
+    this.validateForm.reset()
     this.resourceVisible = true
   }
   async addHandle() {
@@ -83,43 +78,22 @@ export class DepartmentComponent extends ResultHelper implements OnInit {
     }
     if (this.validateForm.valid) {
       let obj = { ...this.validateForm.value }
+      obj['type'] = getCurrentUser().userType
+      obj['cron'] = `D${obj.day},R${obj.num},H${obj.time}`
       if (this.editObj) {
         obj['id'] = this.editObj.id
       }
-      let data = await this.system.operationDepartment(obj)
-      console.log(data)
+      await this.requestHelper(this.main.operationConfig(obj))
       this.loadData()
       this.resourceVisible = false
     }
   }
   async delete(id) {
-    let [error] = await this.requestHelper(this.system.deleteDepartment(id))
+    let [error] = await this.requestHelper(this.main.deleteConfig(id))
     if (!error) {
       this.loadData()
     }
   }
 
-  listOfMapData: IResource[] = [
-    {
-      name: 'John Brown sr.',
-    },
-    {
-      name: 'Joe Black',
-    },
-  ]
-  mapOfExpandedData: { [id: string]: TreeNodeInterface[] } = {}
-
-  collapse(array: TreeNodeInterface[], data: TreeNodeInterface, $event: boolean): void {
-    if ($event === false) {
-      if (data.children) {
-        data.children.forEach(d => {
-          const target = array.find(a => a.id === d.id)!
-          target.expand = false
-          this.collapse(array, target, false)
-        })
-      } else {
-        return
-      }
-    }
-  }
+  listOfMapData = []
 }

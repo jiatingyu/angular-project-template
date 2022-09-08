@@ -84,7 +84,7 @@
       <nz-form-item>
         <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="icon">菜单图标</nz-form-label>
         <nz-form-control [nzSm]="14" [nzXs]="24">
-          <nz-select style="width: 100%" formControlName="icon" id="icon" [nzCustomTemplate]="custom">
+          <nz-select style="width: 100%" formControlName="icon" id="icon" [nzCustomTemplate]="custom" nzAllowClear>
             <nz-option nzCustomContent nzLabel="dot-chart" nzValue="dot-chart"
               ><i nz-icon nzType="dot-chart" nzTheme="outline"></i>
             </nz-option>
@@ -103,6 +103,13 @@
             <nz-option nzCustomContent nzLabel="pie-chart" nzValue="pie-chart"
               ><i nz-icon nzType="pie-chart" nzTheme="outline"></i>
             </nz-option>
+            <nz-option nzCustomContent nzLabel="heat-map" nzValue="heat-map"
+              ><i nz-icon nzType="heat-map" nzTheme="outline"></i>
+            </nz-option>
+            <nz-option nzCustomContent nzLabel="bar-chart" nzValue="bar-chart"
+              ><i nz-icon nzType="bar-chart" nzTheme="outline"></i>
+            </nz-option>
+            <nz-option nzCustomContent nzLabel="fund" nzValue="fund"><i nz-icon nzType="fund" nzTheme="outline"></i> </nz-option>
           </nz-select>
           <ng-template #custom let-selected>
             <span>Label: {{ selected.nzLabel }}</span>

@@ -36,6 +36,9 @@ import { NzDrawerModule } from 'ng-zorro-antd/drawer'
 import { NzSegmentedModule } from 'ng-zorro-antd/segmented'
 import { NzRadioModule } from 'ng-zorro-antd/radio'
 import { NzResultModule } from 'ng-zorro-antd/result'
+import { NzStatisticModule } from 'ng-zorro-antd/statistic'
+import { NzEmptyModule } from 'ng-zorro-antd/empty'
+import { NzTabsModule } from 'ng-zorro-antd/tabs'
 const commonNgZorror = [
   NzButtonModule,
   NzFormModule,
@@ -69,6 +72,9 @@ const commonNgZorror = [
   NzSegmentedModule,
   NzRadioModule,
   NzResultModule,
+  NzStatisticModule,
+  NzEmptyModule,
+  NzTabsModule,
 ]
 
 @NgModule({

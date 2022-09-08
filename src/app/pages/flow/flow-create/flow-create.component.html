@@ -1,0 +1,141 @@
+<form nz-form [formGroup]="searchForm" [nzLayout]="'inline'">
+  <nz-form-item>
+    <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="account">名称</nz-form-label>
+    <nz-form-control [nzSm]="14" [nzXs]="24">
+      <!-- <nz-date-picker formControlName="name"></nz-date-picker> -->
+      <input nz-input formControlName="name" />
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-control>
+      <button nz-button nzType="primary" (click)="loadData()">搜索</button>
+    </nz-form-control>
+  </nz-form-item>
+</form>
+<nz-tabset [nzSelectedIndex]="selectIndex" (nzSelectedIndexChange)="selectChange($event)">
+  <nz-tab nzTitle="模型管理">
+    <nz-card [nzTitle]="list">
+      <iframe [src]="frameUrl" [ngStyle]="{ width: '100%', height: '70vh', display: !isNull(frameUrl) ? 'block' : 'none' }">
+      </iframe>
+      <nz-table
+        #basicTable
+        [nzData]="dataSet"
+        [nzSize]="'small'"
+        [nzFrontPagination]="false"
+        [nzTotal]="pageObj.total"
+        [(nzPageIndex)]="pageObj.page"
+        [(nzPageSize)]="pageObj.size"
+        [nzLoading]="loading"
+        (nzPageIndexChange)="loadData()"
+      >
+        <thead>
+          <tr>
+            <th>id</th>
+            <th>模型名称</th>
+            <!-- <th>信息</th> -->
+            <th>模型key</th>
+            <th>版本</th>
+            <th>是否发布</th>
+            <th>创建时间</th>
+            <th>最后更新时间</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of basicTable.data; index as i">
+            <td>{{ data.id }}</td>
+            <td>{{ data.name }}</td>
+            <!-- <td>{{ data.metaInfo | json }}</td> -->
+            <td>{{ data.key }}</td>
+            <td>{{ 'V' + data.version }}</td>
+            <td>{{ data.deploymentId ? '已发布' : '未发布' }}</td>
+            <td>{{ data.createTime }}</td>
+            <td>{{ data.lastUpdateTime }}</td>
+            <td>
+              <a (click)="deploy(data)" *ngIf="!data.deploymentId"
+                >发布
+                <nz-divider nzType="vertical"></nz-divider>
+              </a>
+              <a (click)="delete(data)">删除</a>
+            </td>
+          </tr>
+        </tbody>
+      </nz-table>
+      <ng-template #list>
+        <div nz-row nzType="flex" nzJustify="space-between">
+          <div>
+            <nz-space>
+              <button *nzSpaceItem nz-button nzType="primary" (click)="loadData()">
+                <i nz-icon nzType="fire" nzTheme="outline"></i>刷新
+              </button>
+              <button *nzSpaceItem nz-button [disabled]="!isNull(frameUrl)" nzType="primary" (click)="addModel()">
+                <i nz-icon nzType="contacts" nzTheme="outline"></i>新增
+              </button>
+              <button *nzSpaceItem [disabled]="isNull(frameUrl)" nz-button nzType="primary" (click)="closeIframe()">
+                <i nz-icon nzType="contacts" nzTheme="outline"></i>关闭
+              </button>
+            </nz-space>
+          </div>
+        </div>
+      </ng-template>
+    </nz-card>
+  </nz-tab>
+  <!-- [nzFrontPagination]="false"
+  [nzTotal]="pageObj.total"
+  [(nzPageIndex)]="pageObj.page"
+  [(nzPageSize)]="pageObj.size"
+  (nzPageIndexChange)="loadDataDeploy()" -->
+  <nz-tab nzTitle="部署管理">
+    <nz-table #basicTable1 [nzData]="deployList" [nzSize]="'small'" [nzLoading]="loading">
+      <thead>
+        <tr>
+          <th>id</th>
+          <th>模型名称</th>
+          <!-- <th>信息</th> -->
+          <th>模型key</th>
+          <th>版本</th>
+          <th>部署ID</th>
+          <!-- <th>创建时间</th>
+          <th>最后更新时间</th> -->
+          <!-- <th>操作</th> -->
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let data of basicTable1.data; index as i">
+          <td>{{ data.id }}</td>
+          <td>{{ data.name }}</td>
+          <!-- <td>{{ data.metaInfo | json }}</td> -->
+          <td>{{ data.key }}</td>
+          <td>{{ 'V' + data.version }}</td>
+          <td>{{ data.deploymentId }}</td>
+          <!-- <td>{{ data.createTime }}</td>
+          <td>{{ data.lastUpdateTime }}</td> -->
+          <!-- <td>
+            <a (click)="deploy(data)" *ngIf="!data.deploymentId"
+              >发布
+              <nz-divider nzType="vertical"></nz-divider>
+            </a>
+            <a (click)="delete(data)">删除</a>
+          </td> -->
+        </tr>
+      </tbody>
+    </nz-table>
+    <ng-template #list>
+      <div nz-row nzType="flex" nzJustify="space-between">
+        <div>
+          <nz-space>
+            <button *nzSpaceItem nz-button nzType="primary" (click)="loadData()">
+              <i nz-icon nzType="fire" nzTheme="outline"></i>刷新
+            </button>
+            <button *nzSpaceItem nz-button nzType="primary" (click)="addModel()">
+              <i nz-icon nzType="contacts" nzTheme="outline"></i>新增
+            </button>
+            <button *nzSpaceItem nz-button nzType="primary" (click)="closeIframe()">
+              <i nz-icon nzType="contacts" nzTheme="outline"></i>关闭
+            </button>
+          </nz-space>
+        </div>
+      </div>
+    </ng-template>
+  </nz-tab>
+</nz-tabset>

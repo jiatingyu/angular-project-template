@@ -79,6 +79,35 @@ export class MainService {
     return this.request.post('/zdry/anon', data)
   }
 
+  // 重点人员操作
+  async getMainDetailsExport(params = {}) {
+    return this.request.get('/analysis/zdry/export', { params, responseType: 'blob' })
+  }
+  async getMainDetails(params = {}) {
+    return this.request.get('/zdry', { params })
+  }
+  async getMainDetail(params = {}) {
+    return this.request.get('/zdry', { params })
+  }
+  async operationMainDetail(data) {
+    return this.request.request({
+      url: '/zdry',
+      method: data.id ? 'put' : 'post',
+      data,
+    })
+  }
+  async deleteMainDetail(id) {
+    return this.request.delete(`/zdry/${id}`)
+  }
+  // 获取重点人员频次
+  async getMainRate(params = {}) {
+    return this.request.get('/zdry/rule', { params })
+  }
+  // 分配部分
+  async putDistributeDept(data) {
+    return this.request.put('/zdry/batch', data)
+  }
+
   // hazard 地区
 
   async getHazards(data) {
@@ -98,5 +127,64 @@ export class MainService {
   }
   async deleteHazards(id: number) {
     return this.request.delete(`/fxdq/${id}`)
+  }
+
+  // 检测数量
+  async getJcsl(params) {
+    return this.request.get(`/analysis/jcsl`, { params })
+  }
+
+  // --- 审批
+
+  async getModelList(params) {
+    return this.request.get(`/activity/list`, { params })
+  }
+  async deleteModel(id) {
+    return this.request.delete(`/activity/remove/${id}`)
+  }
+  async deployModel(id) {
+    return this.request.get(`/activity/deploy/${id}`)
+  }
+  async getdeployList() {
+    return this.request.get(`/activity/deployList`)
+  }
+
+  async getOwnerTask(deptId: number) {
+    return this.request.get(`/activity/task`, {
+      params: { deptId },
+    })
+  }
+  async startFlow() {
+    return this.request.get(`/activity/start`)
+  }
+  async doTask(data: { taskId: number; flag: number; comment: string }[]) {
+    return this.request.post(`/activity/doTask`, data)
+  }
+  // 发起流程
+  async postWorkFlow(data) {
+    // return this.request.post(`/workFlow`, data)
+    return this.request.post(`/workFlow/batch`, data)
+  }
+  async getWorkFlow() {
+    return this.request.get(`/workFlow`)
+  }
+
+  // 管控设置
+
+  async deleteConfig(id) {
+    return this.request.delete(`/config/rule/${id}`)
+  }
+  async getConfig(params?) {
+    return this.request.get(`/config/rule`, params)
+  }
+  async postConfig(data) {
+    return this.request.post(`/config/rule`, data)
+  }
+  async operationConfig(data) {
+    return this.request({
+      url: '/config/rule',
+      method: data.id ? 'put' : 'post',
+      data,
+    })
   }
 }

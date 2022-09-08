@@ -114,7 +114,7 @@ export class UserComponent extends ResultHelper implements OnInit {
     this.userVisible = true
   }
   async resetPwd(data: IUser) {
-    await this.requestHelper(this.system.operationUser({ ...data, password: '123' }))
+    await this.requestHelper(this.system.operationUser({ ...data, password: '123456' }))
   }
   async delete(id) {
     let [err] = await this.requestHelper(this.system.deleteUser(id))

@@ -6,8 +6,35 @@
       <button *nzSpaceItem nz-button nzType="primary" (click)="exportData()" [nzLoading]="downLoading">
         <i nz-icon nzType="logout" nzTheme="outline"></i>导出Excel
       </button>
-      <button *nzSpaceItem nz-button nzType="primary" (click)="sendMsg()" [nzLoading]="msgLoading">
+      <button
+        *nzSpaceItem
+        nz-button
+        nzType="primary"
+        [disabled]="getCheckedData().length === 0"
+        (click)="sendMsg()"
+        [nzLoading]="msgLoading"
+      >
         <i nz-icon nzType="login" nzTheme="outline"></i>发送短信
+      </button>
+      <button
+        *nzSpaceItem
+        nz-button
+        nzType="primary"
+        [disabled]="getCheckedData().length === 0"
+        (click)="openDistribute()"
+        [nzLoading]="msgLoading"
+      >
+        <i nz-icon nzType="login" nzTheme="outline"></i>分配到部门
+      </button>
+      <button
+        *nzSpaceItem
+        nz-button
+        nzType="primary"
+        [disabled]="getCheckedData().length === 0"
+        (click)="openManage()"
+        [nzLoading]="msgLoading"
+      >
+        <i nz-icon nzType="login" nzTheme="outline"></i>管控设置
       </button>
     </nz-space>
   </nz-page-header-extra>
@@ -68,32 +95,70 @@
   [nzPageSizeOptions]="[20, 30, 40, 50]"
   [nzData]="listOfData"
   [nzSize]="'small'"
+  [nzScroll]="{ x: '1150px', y: '700px' }"
 >
   <thead>
     <tr>
       <th
+        nzLeft
+        nzWidth="30px"
         nzShowCheckbox
         [(nzChecked)]="isAllDisplayDataChecked"
         [nzIndeterminate]="isIndeterminate"
         (nzCheckedChange)="checkAll($event)"
       ></th>
-      <th nzWidth="6%">姓名</th>
-      <th nzWidth="6%">性别</th>
-      <th nzWidth="11%">电话</th>
-      <th nzWidth="11%">身份证号</th>
-      <th nzWidth="7%">检测频次</th>
-      <th nzWidth="6%">行业</th>
-      <th nzWidth="18%">工作单位</th>
-      <th nzWidth="8%">实检次数</th>
-      <th nzWidth="8%">应检次数</th>
-      <th nzWidth="8%">状态</th>
-      <th>操作</th>
+      <th nzLeft nzWidth="180px">采集信息日期</th>
+      <th nzLeft nzWidth="120px">姓名</th>
+      <th nzWidth="160px">身份证</th>
+      <th nzWidth="160px">联系电话</th>
+      <th nzWidth="130px">实检数</th>
+      <th nzWidth="130px">应检数</th>
+      <th nzWidth="130px">状态</th>
+      <th nzWidth="280px">入犍目的地</th>
+      <th nzWidth="160px">管控镇</th>
+      <th nzWidth="280px">7天行程卡轨迹</th>
+      <th nzWidth="260px">7天内返犍风险地</th>
+      <th nzWidth="160px">人员类型</th>
+      <th nzWidth="180px">在犍的居住村、社区</th>
+      <th nzWidth="160px">健康码颜色</th>
+      <th nzWidth="160px">核查人员及电话</th>
+      <th nzWidth="160px">实际管控措施</th>
+      <th nzWidth="160px">管控地点</th>
+      <th nzWidth="160px">实际管控开始时间</th>
+      <th nzWidth="260px">“五包一”管控责任人及联系方式</th>
+      <th nzWidth="260px">是否持有48小时内核酸阴性证明</th>
+      <!-- <th nzWidth="260px">抵川第一次采集时间及结果</th>
+      <th nzWidth="260px">抵川第二次采集时间及结果</th>
+      <th nzWidth="260px">抵川第三次采集时间及结果</th>
+      <th nzWidth="260px">抵川第四次采集时间及结果</th>
+      <th nzWidth="260px">抵川第五次采集时间及结果</th> -->
+      <th nzWidth="260px">解除管控措施时间</th>
+      <th nzWidth="260px">解除管控措施责任人及联系方式</th>
+      <th nzWidth="200px">备注</th>
+      <th nzWidth="200px">镇分管领导审核意见</th>
+      <th nzWidth="200px">解除管控申请</th>
+      <th nzWidth="200px">解除管控意见</th>
+      <!-- <th nzWidth="160px">提交时间</th> -->
+      <!-- <th nzWidth="160px">健康码信息</th> -->
+      <th nzWidth="160px">行程卡</th>
+      <th nzWidth="260px">途经全部城市</th>
+      <th nzWidth="260px">到犍事由</th>
+      <th nzWidth="160px">所属部门</th>
+      <th nzRight nzWidth="160px">操作</th>
     </tr>
   </thead>
   <tbody>
     <tr *ngFor="let data of editRowTable.data; trackBy: trackById">
-      <td nzShowCheckbox [(nzChecked)]="data.checked" (nzCheckedChange)="itemCheckedChange()"></td>
-      <td>
+      <td nzLeft nzShowCheckbox [(nzChecked)]="data.checked" (nzCheckedChange)="itemCheckedChange()"></td>
+      <td nzLeft>
+        <ng-container *ngIf="!editCache[data.id].edit; else cjxxrq">
+          {{ data.cjxxrq | date: 'YYYY-MM-dd hh:mm:ss' }}
+        </ng-container>
+        <ng-template #cjxxrq>
+          <input type="text" nz-input [(ngModel)]="editCache[data.id].data.cjxxrq" />
+        </ng-template>
+      </td>
+      <td nzLeft>
         <ng-container *ngIf="!editCache[data.id].edit; else name">
           {{ data.name }}
         </ng-container>
@@ -101,25 +166,7 @@
           <input type="text" nz-input [(ngModel)]="editCache[data.id].data.name" />
         </ng-template>
       </td>
-      <td>
-        <ng-container *ngIf="!editCache[data.id].edit; else sex">
-          {{ data.sex }}
-        </ng-container>
-        <ng-template #sex>
-          <nz-select [(ngModel)]="editCache[data.id].data.sex" style="width: 100%">
-            <nz-option nzLabel="男" nzValue="男"></nz-option>
-            <nz-option nzLabel="女" nzValue="女"></nz-option>
-          </nz-select>
-        </ng-template>
-      </td>
-      <td>
-        <ng-container *ngIf="!editCache[data.id].edit; else phoneNumber">
-          {{ data.phoneNumber }}
-        </ng-container>
-        <ng-template #phoneNumber>
-          <input type="text" nz-input [(ngModel)]="editCache[data.id].data.phoneNumber" />
-        </ng-template>
-      </td>
+      <!-- 身份证 -->
       <td>
         <ng-container *ngIf="!editCache[data.id].edit; else idCard">
           {{ data.idCard }}
@@ -128,43 +175,30 @@
           <input type="text" nz-input [(ngModel)]="editCache[data.id].data.idCard" />
         </ng-template>
       </td>
+      <!-- 电话 -->
       <td>
-        <ng-container *ngIf="!editCache[data.id].edit; else gkcs">
-          {{ data.gkcs }}
+        <ng-container *ngIf="!editCache[data.id].edit; else phoneNumber">
+          {{ data.phoneNumber }}
         </ng-container>
-        <ng-template #gkcs>
-          <nz-select [(ngModel)]="editCache[data.id].data.gkcs" style="width: 100%">
-            <nz-option *ngFor="let item of rateArr" [nzLabel]="item.name" [nzValue]="item.name"></nz-option>
-          </nz-select>
+        <ng-template #phoneNumber>
+          <input type="text" nz-input [(ngModel)]="editCache[data.id].data.phoneNumber" />
         </ng-template>
       </td>
+      <!-- 应检数 -->
       <td>
-        <ng-container *ngIf="!editCache[data.id].edit; else trades">
-          {{ data.trades }}
-        </ng-container>
-        <ng-template #trades>
-          <input type="text" nz-input [(ngModel)]="editCache[data.id].data.trades" />
-        </ng-template>
+        {{ data.yjcs }}
       </td>
-      <td>
-        <ng-container *ngIf="!editCache[data.id].edit; else gzdw">
-          {{ data.gzdw }}
-        </ng-container>
-        <ng-template #gzdw>
-          <input type="text" nz-input [(ngModel)]="editCache[data.id].data.gzdw" />
-        </ng-template>
-      </td>
+      <!-- 实检数 -->
       <td nz-popover [nzPopoverContent]="Content">
         <ng-template #Content>
           <p *ngFor="let it of data.hsPos">{{ it.jcTime + '-->' + it.addr }}</p>
         </ng-template>
         {{ data.totalNum }}
       </td>
-      <td>
-        {{ data.yjcs }}
-      </td>
+      <!-- 状态 -->
       <td>
         <ng-container *ngIf="!editCache[data.id].edit; else color">
+          <nz-tag *ngIf="data?.color === 4" [nzColor]="'#556B2F'">其他</nz-tag>
           <nz-tag *ngIf="data?.color === 3" [nzColor]="'#f50'">警告</nz-tag>
           <nz-tag *ngIf="data?.color === 2" [nzColor]="'#FFB90F'">待检测</nz-tag>
           <nz-tag *ngIf="data?.color === 1" [nzColor]="'#87d068'">正常</nz-tag>
@@ -174,10 +208,246 @@
             <nz-option nzLabel="正常" [nzValue]="1"></nz-option>
             <nz-option nzLabel="待检测" [nzValue]="2"></nz-option>
             <nz-option nzLabel="警告" [nzValue]="3"></nz-option>
+            <nz-option nzLabel="其他" [nzValue]="4"></nz-option>
           </nz-select>
         </ng-template>
       </td>
-      <td>
+      <!-- 目的地 -->
+      <td nzEllipsis [title]="data.rqmdd">
+        <ng-container *ngIf="!editCache[data.id].edit; else rqmdd">
+          {{ data.rqmdd }}
+        </ng-container>
+        <ng-template #rqmdd>
+          <input type="text" nz-input [(ngModel)]="editCache[data.id].data.rqmdd" />
+        </ng-template>
+      </td>
+      <!-- 管控镇 -->
+      <td nzEllipsis [title]="data.gkz">
+        <ng-container *ngIf="!editCache[data.id].edit; else gkz">
+          {{ data.gkz }}
+        </ng-container>
+        <ng-template #gkz>
+          <input type="text" nz-input [(ngModel)]="editCache[data.id].data.gkz" />
+        </ng-template>
+      </td>
+      <!-- 7天行程卡轨迹 -->
+      <td nzEllipsis [title]="data.xckgj">
+        <ng-container *ngIf="!editCache[data.id].edit; else xckgj">
+          {{ data.xckgj }}
+        </ng-container>
+        <ng-template #xckgj>
+          <input type="text" nz-input [(ngModel)]="editCache[data.id].data.xckgj" />
+        </ng-template>
+      </td>
+      <!-- 7天内返犍风险地 -->
+      <td nzEllipsis [title]="data.qfxd">
+        <ng-container *ngIf="!editCache[data.id].edit; else qfxd">
+          {{ data.qfxd }}
+        </ng-container>
+        <ng-template #qfxd>
+          <input type="text" nz-input [(ngModel)]="editCache[data.id].data.qfxd" />
+        </ng-template>
+      </td>
+      <!-- 人员类型 -->
+      <td nzEllipsis [title]="data.rylx">
+        <ng-container *ngIf="!editCache[data.id].edit; else rylx">
+          {{ data.rylx }}
+        </ng-container>
+        <ng-template #rylx>
+          <input type="text" nz-input [(ngModel)]="editCache[data.id].data.rylx" />
+        </ng-template>
+      </td>
+      <!-- 在犍的居住村、社区 -->
+      <td nzEllipsis [title]="data.zqjzc">
+        <ng-container *ngIf="!editCache[data.id].edit; else zqjzc">
+          {{ data.zqjzc }}
+        </ng-container>
+        <ng-template #zqjzc>
+          <input type="text" nz-input [(ngModel)]="editCache[data.id].data.zqjzc" />
+        </ng-template>
+      </td>
+      <!-- 健康码颜色 -->
+      <td nzEllipsis [title]="data.jkmys">
+        <ng-container *ngIf="!editCache[data.id].edit; else jkmys">
+          {{ data.jkmys }}
+        </ng-container>
+        <ng-template #jkmys>
+          <input type="text" nz-input [(ngModel)]="editCache[data.id].data.jkmys" />
+        </ng-template>
+      </td>
+      <!-- 核查人员及电话 -->
+      <td nzEllipsis [title]="data.hcryjdh">
+        <ng-container *ngIf="!editCache[data.id].edit; else hcryjdh">
+          {{ data.hcryjdh }}
+        </ng-container>
+        <ng-template #hcryjdh>
+          <input type="text" nz-input [(ngModel)]="editCache[data.id].data.hcryjdh" />
+        </ng-template>
+      </td>
+      <!-- 实际管控措施 -->
+      <td nzEllipsis [title]="data.gkcs">
+        {{ data.gkcs }}
+        <!-- <ng-container *ngIf="!editCache[data.id].edit; else gkcs">
+        </ng-container>
+        <ng-template #gkcs>
+          <nz-select [(ngModel)]="editCache[data.id].data.gkcs" style="width: 100%">
+            <nz-option *ngFor="let item of rateArr" [nzLabel]="item.name" [nzValue]="item.name"></nz-option>
+          </nz-select>
+        </ng-template> -->
+      </td>
+      <!-- 管控地点 -->
+      <td nzEllipsis [title]="data.gkdd">
+        <ng-container *ngIf="!editCache[data.id].edit; else gkdd">
+          {{ data.gkdd }}
+        </ng-container>
+        <ng-template #gkdd>
+          <input type="text" nz-input [(ngModel)]="editCache[data.id].data.gkdd" />
+        </ng-template>
+      </td>
+      <!-- 实际管控开始时间	 -->
+      <td nzEllipsis [title]="data.gksj">
+        <ng-container *ngIf="!editCache[data.id].edit; else gksj">
+          {{ data.gksj }}
+        </ng-container>
+        <ng-template #gksj>
+          <!-- <input type="text" nz-input [(ngModel)]="editCache[data.id].data.gksj" /> -->
+          <nz-date-picker nz-input [(ngModel)]="editCache[data.id].data.gksj"></nz-date-picker>
+        </ng-template>
+      </td>
+      <!-- “五包一”管控责 -->
+      <td nzEllipsis [title]="data.gkzrr">
+        <ng-container *ngIf="!editCache[data.id].edit; else gkzrr">
+          {{ data.gkzrr }}
+        </ng-container>
+        <ng-template #gkzrr>
+          <input type="text" nz-input [(ngModel)]="editCache[data.id].data.gkzrr" />
+        </ng-template>
+      </td>
+      <!-- 是否持有48小时内核酸阴性证明 -->
+      <td nzEllipsis [title]="data.hszm">
+        <ng-container *ngIf="!editCache[data.id].edit; else hszm">
+          {{ data.hszm }}
+        </ng-container>
+        <ng-template #hszm>
+          <input type="text" nz-input [(ngModel)]="editCache[data.id].data.hszm" />
+        </ng-template>
+      </td>
+      <!-- 抵川第一次采集时间及结果 -->
+      <!-- <td nzEllipsis [title]="data.dychssj">
+        <ng-container *ngIf="!editCache[data.id].edit; else dychssj">
+          {{ data.dychssj }}
+        </ng-container>
+        <ng-template #dychssj>
+          <input type="text" nz-input [(ngModel)]="editCache[data.id].data.dychssj" />
+        </ng-template>
+      </td> -->
+      <!-- 抵川第2次采集时间及结果 -->
+      <!-- <td nzEllipsis [title]="data.dechssj">
+        <ng-container *ngIf="!editCache[data.id].edit; else dechssj">
+          {{ data.dechssj }}
+        </ng-container>
+        <ng-template #dechssj>
+          <input type="text" nz-input [(ngModel)]="editCache[data.id].data.dechssj" />
+        </ng-template>
+      </td> -->
+      <!-- 抵川第3次采集时间及结果 -->
+      <!-- <td nzEllipsis [title]="data.dschssj">
+        <ng-container *ngIf="!editCache[data.id].edit; else dschssj">
+          {{ data.dschssj }}
+        </ng-container>
+        <ng-template #dschssj>
+          <input type="text" nz-input [(ngModel)]="editCache[data.id].data.dschssj" />
+        </ng-template>
+      </td> -->
+      <!-- 抵川第4次采集时间及结果 -->
+      <!-- <td nzEllipsis [title]="data.dsichssj">
+        <ng-container *ngIf="!editCache[data.id].edit; else dsichssj">
+          {{ data.dsichssj }}
+        </ng-container>
+        <ng-template #dsichssj>
+          <input type="text" nz-input [(ngModel)]="editCache[data.id].data.dsichssj" />
+        </ng-template>
+      </td> -->
+      <!-- 抵川第5次采集时间及结果 -->
+      <!-- <td nzEllipsis [title]="data.dwchssj">
+        <ng-container *ngIf="!editCache[data.id].edit; else dwchssj">
+          {{ data.dwchssj }}
+        </ng-container>
+        <ng-template #dwchssj>
+          <input type="text" nz-input [(ngModel)]="editCache[data.id].data.dwchssj" />
+        </ng-template>
+      </td> -->
+      <!-- 解除管控措施时间 -->
+      <td nzEllipsis [title]="data.jcgksj">
+        <ng-container *ngIf="!editCache[data.id].edit; else jcgksj">
+          {{ data.jcgksj }}
+        </ng-container>
+        <ng-template #jcgksj>
+          <input type="text" nz-input [(ngModel)]="editCache[data.id].data.jcgksj" />
+        </ng-template>
+      </td>
+      <!-- 解除管控措施责任人及联系方式	 -->
+      <td nzEllipsis [title]="data.jcgkry">
+        <ng-container *ngIf="!editCache[data.id].edit; else jcgkry">
+          {{ data.jcgkry }}
+        </ng-container>
+        <ng-template #jcgkry>
+          <input type="text" nz-input [(ngModel)]="editCache[data.id].data.jcgkry" />
+        </ng-template>
+      </td>
+      <!-- 备注	 -->
+      <td nzEllipsis [title]="data.remark">
+        <ng-container *ngIf="!editCache[data.id].edit; else remark">
+          {{ data.remark }}
+        </ng-container>
+        <ng-template #remark>
+          <input type="text" nz-input [(ngModel)]="editCache[data.id].data.remark" />
+        </ng-template>
+      </td>
+      <!-- 镇分管领导审核意见	 -->
+      <td nzEllipsis [title]="data.ldshyj">
+        <ng-container *ngIf="!editCache[data.id].edit; else ldshyj">
+          {{ data.ldshyj }}
+        </ng-container>
+        <ng-template #ldshyj>
+          <input type="text" nz-input [(ngModel)]="editCache[data.id].data.ldshyj" />
+        </ng-template>
+      </td>
+      <!-- 解除除管控申请	 -->
+      <td nzEllipsis [title]="data.jcgksq">
+        <ng-container *ngIf="!editCache[data.id].edit; else jcgksq">
+          {{ data.jcgksq }}
+        </ng-container>
+        <ng-template #jcgksq>
+          <input type="text" nz-input [(ngModel)]="editCache[data.id].data.jcgksq" />
+        </ng-template>
+      </td>
+      <!-- 解除管控意见	 -->
+      <td nzEllipsis [title]="data.jcgkyj">
+        <ng-container *ngIf="!editCache[data.id].edit; else jcgkyj">
+          {{ data.jcgkyj }}
+        </ng-container>
+        <ng-template #jcgkyj>
+          <input type="text" nz-input [(ngModel)]="editCache[data.id].data.jcgkyj" />
+        </ng-template>
+      </td>
+      <!-- 行程卡	 -->
+      <td nzEllipsis [title]="">
+        <img [src]="uri + data.xck" style="height: 50px" />
+      </td>
+      <!-- 途经全部城市	 -->
+      <td nzEllipsis [title]="data.xcksb">
+        {{ data.xcksb }}
+      </td>
+      <!-- 到犍事由	 -->
+      <td nzEllipsis [title]="data.dqsy">
+        {{ data.dqsy }}
+      </td>
+      <!-- 所属部门 -->
+      <td nzEllipsis [title]="data.dqsy">
+        {{ data.deptVo?.name }}
+      </td>
+      <td nzEllipsis [title]="" nzRight>
         <div class="editable-row-operations">
           <ng-container *ngIf="!editCache[data.id].edit; else saveTpl">
             <a (click)="startEdit(data.id)">编辑</a>
@@ -194,3 +464,89 @@
     </tr>
   </tbody>
 </nz-table>
+
+<nz-modal
+  [(nzVisible)]="deptVisible"
+  nzTitle="分配到部门"
+  (nzOnCancel)="deptVisible = !deptVisible"
+  (nzOnOk)="distributeDeptOK()"
+>
+  <ng-container *nzModalContent>
+    <div nz-row>
+      <div nz-col nzSpan="6">选择部门</div>
+      <div nz-col nzSpan="18">
+        <!-- <nz-select  nzShowSearch nzAllowClear style="width: 100%">
+          <nz-option *ngFor="let item of deptArr" [nzLabel]="item.name" [nzValue]="item.id"></nz-option>
+        </nz-select> -->
+        <nz-select style="width: 100%" [(ngModel)]="distributeDept" nzShowSearch nzAllowClear nzPlaceHolder="选择部门">
+          <ng-container *ngFor="let data of departements">
+            <ng-container *ngFor="let item of mapDepartments[data.id]">
+              <nz-option nzCustomContent [nzLabel]="item.name" [nzValue]="item.id">
+                <span [ngStyle]="{ 'margin-left': item.level * 20 + 'px' }"> {{ item.name }}</span></nz-option
+              >
+            </ng-container>
+          </ng-container>
+        </nz-select>
+      </div>
+    </div>
+  </ng-container>
+</nz-modal>
+<nz-modal
+  [(nzVisible)]="manageVisible"
+  nzTitle="管控设置"
+  (nzOnCancel)="manageVisible = !manageVisible"
+  [nzOkLoading]="manageOkLoading"
+  (nzOnOk)="handleManage()"
+>
+  <ng-container *nzModalContent>
+    <form nz-form [formGroup]="manageForm">
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="gkcs">管控措施</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="此项为必填项">
+          <nz-select style="width: 100%" formControlName="gkcs" nzShowSearch nzAllowClear nzPlaceHolder="审批模板">
+            <!-- <nz-option *ngFor="let item of templates.datas" [nzLabel]="item.name" [nzValue]="item.deploymentId"></nz-option> -->
+            <nz-option *ngFor="let item of rateArr" [nzLabel]="item.name" [nzValue]="item.name"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="template">审批模板</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="此项为必填项">
+          <nz-select style="width: 100%" formControlName="template" nzShowSearch nzAllowClear nzPlaceHolder="审批模板">
+            <nz-option *ngFor="let item of templates.datas" [nzLabel]="item.name" [nzValue]="item.deploymentId"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="second">上级部门</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="此项为必填项">
+          <nz-select style="width: 100%" formControlName="second" nzShowSearch nzAllowClear nzPlaceHolder="上级部门">
+            <ng-container *ngFor="let item of parentDepartments">
+              <nz-option nzCustomContent [nzLabel]="item.name" [nzValue]="item.id">
+                <span [ngStyle]="{ 'margin-left': item.level * 20 + 'px' }"> {{ item.name }}</span></nz-option
+              >
+            </ng-container>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="third">顶级部门</nz-form-label>
+        <nz-form-control [nzSm]="14" [nzXs]="24" nzErrorTip="此项为必填项">
+          <nz-select style="width: 100%" formControlName="third" nzShowSearch nzAllowClear nzPlaceHolder="顶级部门">
+            <ng-container *ngFor="let item of parentDepartments">
+              <nz-option nzCustomContent [nzLabel]="item.name" [nzValue]="item.id">
+                <span [ngStyle]="{ 'margin-left': item.level * 20 + 'px' }"> {{ item.name }}</span></nz-option
+              >
+            </ng-container>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="content">备注</nz-form-label>
+        <nz-form-control nzErrorTip="此项为必填项">
+          <input nz-input formControlName="content" id="content" />
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container>
+</nz-modal>

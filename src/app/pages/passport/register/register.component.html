@@ -1,5 +1,6 @@
 <!-- 用户手机端进行申报 -->
 <!--  https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx8b38ba416a7eaaa3&redirect_uri=http://qwhs.cdyibei.com/bk/wx/auth&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect -->
+<!-- https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx8b38ba416a7eaaa3&redirect_uri=http://wx.cdyibei.com/bk/wx/auth&response_type=code&scope=snsapi_base&state=STATE#wechat_redirect -->
 <div nz-row class="wrap">
   <div class="header">
     <h2>来（返）犍人员专用二维码</h2>
@@ -135,7 +136,7 @@
 
     <nz-form-item nz-row class="register-area">
       <nz-form-control [nzSpan]="24" [nzOffset]="">
-        <button nz-button nzType="primary" class="handle" (click)="submitForm()">提交</button>
+        <button nz-button nzType="primary" class="handle" (click)="submitForm()" [nzLoading]="submitLoading">提交</button>
         <button nz-button style="margin-top: 1rem" class="handle" (click)="saveDraft()">保存草稿</button>
       </nz-form-control>
     </nz-form-item>

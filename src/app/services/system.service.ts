@@ -62,7 +62,7 @@ export class SystemService {
 
   /** 资源相关 */
   async getResources(): Promise<IResponsePage<IResource[]>> {
-    return this.request.get('/user/resource',{params:{ page:1,size:100}})
+    return this.request.get('/user/resource', { params: { page: 1, size: 100 } })
   }
   async getResouce(id: number) {
     return this.request.get('/user/resource', {
@@ -83,7 +83,14 @@ export class SystemService {
 
   // 部门相关
   async getDetapartments(): Promise<IResponsePage<IDepartment[]>> {
-    return this.request.get('/dept',{params:{ page:1,size:100}})
+    return this.request.get('/dept', { params: { page: 1, size: 100 } })
+  }
+
+  async getDepartmentParents(parentId: number): Promise<IResponsePage<IDepartment[]>> {
+    return this.request.get('/dept/parent', { params: { deptId: parentId, page: 1, size: 100 } })
+  }
+  async getDepartments(parentId: number): Promise<IResponsePage<IDepartment[]>> {
+    return this.request.get('/dept', { params: { deptId: parentId, page: 1, size: 100 } })
   }
   async getDepartment(id: number) {
     return this.request.get('/dept', {
