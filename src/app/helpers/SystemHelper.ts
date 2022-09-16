@@ -34,8 +34,13 @@ export class SystemHelper {
         map.get(item.parentId).children = children
       }
     })
-    // return [...map.values()]
-    return [...map.values()].filter(item => !item.parentId)
+    let res = [...map.values()].filter(item => !item.parentId)
+    /** 默认返回顶级部门，如果是中间部门就返回有下级的部门 */
+    if (res.length) {
+      return res
+    } else {
+      return [...map.values()].filter(item => item.children)
+    }
   }
 
   /** 转换属性结构 */

@@ -78,8 +78,15 @@ export class MainService {
   async userRegister(data) {
     return this.request.post('/zdry/anon', data)
   }
+  async getUserInfoByOpenid(openId) {
+    return this.request.get('/zdry/openId', { params: { openId } })
+  }
 
   // 重点人员操作
+  //
+  async getMainDetailsPanel(params = {}) {
+    return this.request.get('/analysis/zdry', { params })
+  }
   async getMainDetailsExport(params = {}) {
     return this.request.get('/analysis/zdry/export', { params, responseType: 'blob' })
   }

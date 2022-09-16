@@ -112,11 +112,9 @@ export class RegisterComponent extends ResultHelper implements OnInit {
       zqqr: [null, [Validators.required]],
     })
     console.log(this.validateForm)
+    // 测试
+    // this.getLastSubData('obzrs5wckm7k-duAHRdp5mLJt5yQ')
     if (!isServer()) {
-      let params = this.active.snapshot.queryParams
-      if (params) {
-        this.openid = params['openid'] || ''
-      }
       let registerData = JSON.parse(window.localStorage.getItem('registerData') || null)
       if (registerData) {
         // 提示用户
@@ -126,7 +124,22 @@ export class RegisterComponent extends ResultHelper implements OnInit {
           nzOnOk: () => registerData.data && this.validateForm.patchValue(registerData.data),
           nzOnCancel: () => window.localStorage.removeItem('registerData'),
         })
+      } else {
+        let params = this.active.snapshot.queryParams
+        if (params) {
+          this.openid = params['openid'] || ''
+          // 如果之前有数据，默认带出来
+          if (this.openid) {
+            this.getLastSubData(this.openid)
+          }
+        }
       }
+    }
+  }
+  async getLastSubData(openId) {
+    let [err, data] = await this.requestHelper(this.main.getUserInfoByOpenid(openId))
+    if (!err) {
+      this.validateForm.patchValue(data || {})
     }
   }
   pcasVisible = false

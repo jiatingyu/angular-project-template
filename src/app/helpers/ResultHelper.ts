@@ -1,5 +1,7 @@
+import { NzMessageService } from 'ng-zorro-antd/message'
+
 export class ResultHelper {
-  message = null
+  message: NzMessageService = null
   constructor(message) {
     this.message = message
   }

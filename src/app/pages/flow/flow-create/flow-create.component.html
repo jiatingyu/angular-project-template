@@ -2,7 +2,6 @@
   <nz-form-item>
     <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="account">名称</nz-form-label>
     <nz-form-control [nzSm]="14" [nzXs]="24">
-      <!-- <nz-date-picker formControlName="name"></nz-date-picker> -->
       <input nz-input formControlName="name" />
     </nz-form-control>
   </nz-form-item>
@@ -80,43 +79,24 @@
       </ng-template>
     </nz-card>
   </nz-tab>
-  <!-- [nzFrontPagination]="false"
-  [nzTotal]="pageObj.total"
-  [(nzPageIndex)]="pageObj.page"
-  [(nzPageSize)]="pageObj.size"
-  (nzPageIndexChange)="loadDataDeploy()" -->
   <nz-tab nzTitle="部署管理">
     <nz-table #basicTable1 [nzData]="deployList" [nzSize]="'small'" [nzLoading]="loading">
       <thead>
         <tr>
           <th>id</th>
           <th>模型名称</th>
-          <!-- <th>信息</th> -->
           <th>模型key</th>
           <th>版本</th>
           <th>部署ID</th>
-          <!-- <th>创建时间</th>
-          <th>最后更新时间</th> -->
-          <!-- <th>操作</th> -->
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let data of basicTable1.data; index as i">
           <td>{{ data.id }}</td>
           <td>{{ data.name }}</td>
-          <!-- <td>{{ data.metaInfo | json }}</td> -->
           <td>{{ data.key }}</td>
           <td>{{ 'V' + data.version }}</td>
           <td>{{ data.deploymentId }}</td>
-          <!-- <td>{{ data.createTime }}</td>
-          <td>{{ data.lastUpdateTime }}</td> -->
-          <!-- <td>
-            <a (click)="deploy(data)" *ngIf="!data.deploymentId"
-              >发布
-              <nz-divider nzType="vertical"></nz-divider>
-            </a>
-            <a (click)="delete(data)">删除</a>
-          </td> -->
         </tr>
       </tbody>
     </nz-table>

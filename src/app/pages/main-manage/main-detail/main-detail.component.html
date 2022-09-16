@@ -56,16 +56,18 @@
     <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="color">状态</nz-form-label>
     <nz-form-control [nzSm]="14" [nzXs]="24">
       <nz-select formControlName="color" id="color" style="width: 100px">
+        <nz-option nzLabel="待处理" [nzValue]="0"></nz-option>
         <nz-option nzLabel="正常" [nzValue]="1"></nz-option>
         <nz-option nzLabel="待检测" [nzValue]="2"></nz-option>
         <nz-option nzLabel="警告" [nzValue]="3"></nz-option>
+        <nz-option nzLabel="其他" [nzValue]="4"></nz-option>
       </nz-select>
     </nz-form-control>
   </nz-form-item>
   <nz-form-item>
-    <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="queryDate">时间</nz-form-label>
-    <nz-form-control [nzSm]="14" [nzXs]="24">
-      <nz-date-picker formControlName="queryDate"></nz-date-picker>
+    <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="dateRange">时间</nz-form-label>
+    <nz-form-control [nzSm]="18" [nzXs]="24">
+      <nz-range-picker formControlName="dateRange"></nz-range-picker>
     </nz-form-control>
   </nz-form-item>
   <nz-form-item>
@@ -111,12 +113,11 @@
       <th nzLeft nzWidth="120px">姓名</th>
       <th nzWidth="160px">身份证</th>
       <th nzWidth="160px">联系电话</th>
-      <th nzWidth="130px">实检数</th>
-      <th nzWidth="130px">应检数</th>
-      <th nzWidth="130px">状态</th>
+
       <th nzWidth="280px">入犍目的地</th>
       <th nzWidth="160px">管控镇</th>
       <th nzWidth="280px">7天行程卡轨迹</th>
+      <th nzWidth="280px">核查情况</th>
       <th nzWidth="260px">7天内返犍风险地</th>
       <th nzWidth="160px">人员类型</th>
       <th nzWidth="180px">在犍的居住村、社区</th>
@@ -132,18 +133,21 @@
       <th nzWidth="260px">抵川第三次采集时间及结果</th>
       <th nzWidth="260px">抵川第四次采集时间及结果</th>
       <th nzWidth="260px">抵川第五次采集时间及结果</th> -->
-      <th nzWidth="260px">解除管控措施时间</th>
-      <th nzWidth="260px">解除管控措施责任人及联系方式</th>
       <th nzWidth="200px">备注</th>
+      <!-- <th nzWidth="260px">解除管控措施时间</th>
+        <th nzWidth="260px">解除管控措施责任人及联系方式</th>
       <th nzWidth="200px">镇分管领导审核意见</th>
       <th nzWidth="200px">解除管控申请</th>
-      <th nzWidth="200px">解除管控意见</th>
+      <th nzWidth="200px">解除管控意见</th> -->
       <!-- <th nzWidth="160px">提交时间</th> -->
       <!-- <th nzWidth="160px">健康码信息</th> -->
       <th nzWidth="160px">行程卡</th>
       <th nzWidth="260px">途经全部城市</th>
       <th nzWidth="260px">到犍事由</th>
       <th nzWidth="160px">所属部门</th>
+      <th nzWidth="130px">实检数</th>
+      <th nzWidth="130px">应检数</th>
+      <th nzWidth="130px">状态</th>
       <th nzRight nzWidth="160px">操作</th>
     </tr>
   </thead>
@@ -184,34 +188,7 @@
           <input type="text" nz-input [(ngModel)]="editCache[data.id].data.phoneNumber" />
         </ng-template>
       </td>
-      <!-- 应检数 -->
-      <td>
-        {{ data.yjcs }}
-      </td>
-      <!-- 实检数 -->
-      <td nz-popover [nzPopoverContent]="Content">
-        <ng-template #Content>
-          <p *ngFor="let it of data.hsPos">{{ it.jcTime + '-->' + it.addr }}</p>
-        </ng-template>
-        {{ data.totalNum }}
-      </td>
-      <!-- 状态 -->
-      <td>
-        <ng-container *ngIf="!editCache[data.id].edit; else color">
-          <nz-tag *ngIf="data?.color === 4" [nzColor]="'#556B2F'">其他</nz-tag>
-          <nz-tag *ngIf="data?.color === 3" [nzColor]="'#f50'">警告</nz-tag>
-          <nz-tag *ngIf="data?.color === 2" [nzColor]="'#FFB90F'">待检测</nz-tag>
-          <nz-tag *ngIf="data?.color === 1" [nzColor]="'#87d068'">正常</nz-tag>
-        </ng-container>
-        <ng-template #color>
-          <nz-select [(ngModel)]="editCache[data.id].data.color" style="width: 100%">
-            <nz-option nzLabel="正常" [nzValue]="1"></nz-option>
-            <nz-option nzLabel="待检测" [nzValue]="2"></nz-option>
-            <nz-option nzLabel="警告" [nzValue]="3"></nz-option>
-            <nz-option nzLabel="其他" [nzValue]="4"></nz-option>
-          </nz-select>
-        </ng-template>
-      </td>
+
       <!-- 目的地 -->
       <td nzEllipsis [title]="data.rqmdd">
         <ng-container *ngIf="!editCache[data.id].edit; else rqmdd">
@@ -237,6 +214,15 @@
         </ng-container>
         <ng-template #xckgj>
           <input type="text" nz-input [(ngModel)]="editCache[data.id].data.xckgj" />
+        </ng-template>
+      </td>
+      <!-- 核查情况 -->
+      <td nzEllipsis [title]="data.hcqk">
+        <ng-container *ngIf="!editCache[data.id].edit; else hcqk">
+          {{ data.hcqk }}
+        </ng-container>
+        <ng-template #hcqk>
+          <input type="text" nz-input [(ngModel)]="editCache[data.id].data.hcqk" />
         </ng-template>
       </td>
       <!-- 7天内返犍风险地 -->
@@ -378,23 +364,23 @@
         </ng-template>
       </td> -->
       <!-- 解除管控措施时间 -->
-      <td nzEllipsis [title]="data.jcgksj">
+      <!-- <td nzEllipsis [title]="data.jcgksj">
         <ng-container *ngIf="!editCache[data.id].edit; else jcgksj">
           {{ data.jcgksj }}
         </ng-container>
         <ng-template #jcgksj>
           <input type="text" nz-input [(ngModel)]="editCache[data.id].data.jcgksj" />
         </ng-template>
-      </td>
+      </td> -->
       <!-- 解除管控措施责任人及联系方式	 -->
-      <td nzEllipsis [title]="data.jcgkry">
+      <!-- <td nzEllipsis [title]="data.jcgkry">
         <ng-container *ngIf="!editCache[data.id].edit; else jcgkry">
           {{ data.jcgkry }}
         </ng-container>
         <ng-template #jcgkry>
           <input type="text" nz-input [(ngModel)]="editCache[data.id].data.jcgkry" />
         </ng-template>
-      </td>
+      </td> -->
       <!-- 备注	 -->
       <td nzEllipsis [title]="data.remark">
         <ng-container *ngIf="!editCache[data.id].edit; else remark">
@@ -405,32 +391,32 @@
         </ng-template>
       </td>
       <!-- 镇分管领导审核意见	 -->
-      <td nzEllipsis [title]="data.ldshyj">
+      <!-- <td nzEllipsis [title]="data.ldshyj">
         <ng-container *ngIf="!editCache[data.id].edit; else ldshyj">
           {{ data.ldshyj }}
         </ng-container>
         <ng-template #ldshyj>
           <input type="text" nz-input [(ngModel)]="editCache[data.id].data.ldshyj" />
         </ng-template>
-      </td>
+      </td> -->
       <!-- 解除除管控申请	 -->
-      <td nzEllipsis [title]="data.jcgksq">
+      <!-- <td nzEllipsis [title]="data.jcgksq">
         <ng-container *ngIf="!editCache[data.id].edit; else jcgksq">
           {{ data.jcgksq }}
         </ng-container>
         <ng-template #jcgksq>
           <input type="text" nz-input [(ngModel)]="editCache[data.id].data.jcgksq" />
         </ng-template>
-      </td>
+      </td> -->
       <!-- 解除管控意见	 -->
-      <td nzEllipsis [title]="data.jcgkyj">
+      <!-- <td nzEllipsis [title]="data.jcgkyj">
         <ng-container *ngIf="!editCache[data.id].edit; else jcgkyj">
           {{ data.jcgkyj }}
         </ng-container>
         <ng-template #jcgkyj>
           <input type="text" nz-input [(ngModel)]="editCache[data.id].data.jcgkyj" />
         </ng-template>
-      </td>
+      </td> -->
       <!-- 行程卡	 -->
       <td nzEllipsis [title]="">
         <img [src]="uri + data.xck" style="height: 50px" />
@@ -446,6 +432,36 @@
       <!-- 所属部门 -->
       <td nzEllipsis [title]="data.dqsy">
         {{ data.deptVo?.name }}
+      </td>
+      <!-- 应检数 -->
+      <td>
+        {{ data.yjcs }}
+      </td>
+      <!-- 实检数 -->
+      <td nz-popover [nzPopoverContent]="Content">
+        <ng-template #Content>
+          <p *ngFor="let it of data.hsPos">{{ it.jcTime + '-->' + it.addr }}</p>
+        </ng-template>
+        {{ data.totalNum }}
+      </td>
+      <!-- 状态 -->
+      <td>
+        <ng-container *ngIf="!editCache[data.id].edit; else color">
+          <nz-tag *ngIf="data?.color === 4" [nzColor]="'#556B2F'">其他</nz-tag>
+          <nz-tag *ngIf="data?.color === 3" [nzColor]="'#f50'">警告</nz-tag>
+          <nz-tag *ngIf="data?.color === 2" [nzColor]="'#FFB90F'">待检测</nz-tag>
+          <nz-tag *ngIf="data?.color === 1" [nzColor]="'#87d068'">正常</nz-tag>
+          <nz-tag *ngIf="data?.color === 0" [nzColor]="'#764ba2'">待处理</nz-tag>
+        </ng-container>
+        <ng-template #color>
+          <nz-select [(ngModel)]="editCache[data.id].data.color" style="width: 100%">
+            <nz-option nzLabel="待处理" [nzValue]="0"></nz-option>
+            <nz-option nzLabel="正常" [nzValue]="1"></nz-option>
+            <nz-option nzLabel="待检测" [nzValue]="2"></nz-option>
+            <nz-option nzLabel="警告" [nzValue]="3"></nz-option>
+            <nz-option nzLabel="其他" [nzValue]="4"></nz-option>
+          </nz-select>
+        </ng-template>
       </td>
       <td nzEllipsis [title]="" nzRight>
         <div class="editable-row-operations">

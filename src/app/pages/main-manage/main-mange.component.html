@@ -1,17 +1,94 @@
-<form nz-form [formGroup]="searchForm" [nzLayout]="'inline'">
-  <nz-form-item>
-    <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="account">筛选时间</nz-form-label>
-    <nz-form-control [nzSm]="14" [nzXs]="24">
-      <nz-date-picker [(ngModel)]="date" formControlName="date"></nz-date-picker>
-    </nz-form-control>
-  </nz-form-item>
-  <nz-form-item>
-    <nz-form-control>
-      <button nz-button nzType="primary" (click)="loadData()">搜索</button>
-    </nz-form-control>
-  </nz-form-item>
-</form>
-<nz-card [nzTitle]="list">
+<nz-card [nzTitle]="list" style="margin-bottom: 1rem">
+  <nz-spin [nzSpinning]="panelLoading">
+    <div nz-row [nzGutter]="16" class="wrap">
+      <div nz-col nzSpan="6">
+        <div class="panel panel1" (dblclick)="toDetail(0)">
+          <span class="icon">
+            <i nz-icon nzType="laptop" nzTheme="outline"></i>
+          </span>
+          <div>
+            <h2>{{ analysisObj.wait | number }}</h2>
+            <h4>待处理（人）</h4>
+          </div>
+        </div>
+      </div>
+      <div nz-col nzSpan="6" class="wrap">
+        <div class="panel panel2" (dblclick)="toDetail(1)">
+          <span class="icon">
+            <i nz-icon nzType="file-done" nzTheme="outline"></i>
+          </span>
+          <div>
+            <h2>{{ analysisObj.normal | number }}</h2>
+            <h4>正常（人）</h4>
+          </div>
+        </div>
+      </div>
+      <div nz-col nzSpan="6" class="wrap">
+        <div class="panel panel3" (dblclick)="toDetail(2)">
+          <span class="icon">
+            <i nz-icon nzType="gold" nzTheme="outline"></i>
+          </span>
+          <div>
+            <h2>{{ analysisObj.waitHandle | number }}</h2>
+            <h4>待检测（人）</h4>
+          </div>
+        </div>
+      </div>
+      <div nz-col nzSpan="6" class="wrap">
+        <div class="panel panel4" (dblclick)="toDetail(3)">
+          <span class="icon">
+            <i nz-icon nzType="fire" nzTheme="outline"></i>
+          </span>
+          <div>
+            <h2>{{ analysisObj.waring | number }}</h2>
+            <h4>警告（人）</h4>
+          </div>
+        </div>
+      </div>
+      <div nz-col nzSpan="6" class="wrap">
+        <div class="panel panel5" (dblclick)="toDetail(4)">
+          <span class="icon">
+            <i nz-icon nzType="field-time" nzTheme="outline"></i>
+          </span>
+          <div>
+            <h2>{{ analysisObj.other | number }}</h2>
+            <h4>其他（人）</h4>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nz-spin>
+  <ng-template #list>
+    <div nz-row nzType="flex" nzJustify="space-between">
+      <div>
+        <form nz-form [formGroup]="searchFormPanel" [nzLayout]="'inline'">
+          <nz-form-item>
+            <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="account">筛选时间</nz-form-label>
+            <nz-form-control [nzSm]="18" [nzXs]="24">
+              <nz-range-picker [(ngModel)]="datePanel" formControlName="date"></nz-range-picker>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-control>
+              <button nz-button nzType="primary" (click)="loadDataPanel()">搜索</button>
+            </nz-form-control>
+          </nz-form-item>
+        </form>
+      </div>
+      <div>
+        <nz-space>
+          <!-- <button *nzSpaceItem nz-button nzType="primary" (click)="loadData()">
+            <i nz-icon nzType="fire" nzTheme="outline"></i>刷新
+          </button> -->
+          <button *nzSpaceItem nz-button nzType="primary" (click)="checkUsers()">
+            <i nz-icon nzType="contacts" nzTheme="outline"></i>查看全部人员信息
+          </button>
+        </nz-space>
+      </div>
+    </div>
+  </ng-template>
+</nz-card>
+<nz-card [nzTitle]="list1">
   <nz-table #basicTable [nzData]="listOfData" [nzSize]="'small'" [nzLoading]="loading">
     <thead>
       <tr>
@@ -36,9 +113,24 @@
       </tr>
     </tbody>
   </nz-table>
-  <ng-template #list>
+  <ng-template #list1>
     <div nz-row nzType="flex" nzJustify="space-between">
-      <div>{{ dateFormart() }}-结果展示</div>
+      <div>
+        <!-- {{ dateFormart() }}-结果展示  -->
+        <form nz-form [formGroup]="searchForm" [nzLayout]="'inline'">
+          <nz-form-item>
+            <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="account">筛选时间:</nz-form-label>
+            <nz-form-control [nzSm]="14" [nzXs]="24">
+              <nz-date-picker [(ngModel)]="date" formControlName="date"></nz-date-picker>
+            </nz-form-control>
+          </nz-form-item>
+          <nz-form-item>
+            <nz-form-control>
+              <button nz-button nzType="primary" (click)="loadData()">搜索</button>
+            </nz-form-control>
+          </nz-form-item>
+        </form>
+      </div>
       <div>
         <nz-space>
           <button *nzSpaceItem nz-button nzType="primary" (click)="loadData()">

@@ -22,14 +22,50 @@ export class MainMangeComponent extends ResultHelper implements OnInit {
     super(message)
   }
   searchForm: FormGroup
+  searchFormPanel: FormGroup
   date = new Date()
+  datePanel = [new Date(), new Date()]
   listOfData = []
   loading = false
+  panelLoading = false
   ngOnInit() {
     this.searchForm = this.fb.group({
       date: [this.date],
     })
+    this.searchFormPanel = this.fb.group({
+      date: [this.datePanel],
+    })
+    this.loadDataPanel()
     this.loadData()
+  }
+  analysisObj = {
+    wait: 0,
+    normal: 0,
+    waitHandle: 0,
+    waring: 0,
+    other: 0,
+  }
+  async loadDataPanel() {
+    try {
+      this.panelLoading = true
+      let obj = {
+        queryDate: this.dateHelper.formart(this.datePanel[0], 'YYYY-MM-DD HH:mm:ss'),
+        queryEndDate: this.dateHelper.formart(this.datePanel[1], 'YYYY-MM-DD HH:mm:ss'),
+      }
+      let [err, data] = await this.requestHelper(this.mainService.getMainDetailsPanel(obj))
+      if (!err) {
+        this.listOfData = data || {}
+        let [wait, normal, waitHandle, waring, other] = Object.values(data || {}) as number[]
+        this.analysisObj = { wait, normal, waitHandle, waring, other }
+      } else {
+        this.listOfData = []
+      }
+    } catch (error) {
+      console.dir(error)
+      this.message.error(error.message)
+    } finally {
+      this.panelLoading = false
+    }
   }
   async loadData() {
     try {
@@ -56,5 +92,11 @@ export class MainMangeComponent extends ResultHelper implements OnInit {
 
   checkUsers() {
     this.router.navigate(['/mainManage/detail'])
+  }
+  toDetail(val) {
+    console.log(val)
+    let queryDate = this.dateHelper.formart(this.datePanel[0], 'YYYY-MM-DD HH:mm:ss')
+    let queryEndDate = this.dateHelper.formart(this.datePanel[1], 'YYYY-MM-DD HH:mm:ss')
+    this.router.navigate(['/mainManage/detail'], { queryParams: { state: val, queryDate, queryEndDate } })
   }
 }

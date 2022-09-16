@@ -44,6 +44,7 @@ interface ItemData {
   addr: string
   color: number
 
+  hcqk?: string
   dychssj?: string
   dechssj?: string
   dschssj?: string
@@ -160,15 +161,17 @@ export class MainDetailComponent extends ResultHelper implements OnInit {
     let params = this.active.snapshot.queryParams
     let rangeDate = []
     // 获取外部时间
-    if (params && params['date']) {
-      rangeDate[0] = new Date(params['date'])
-      rangeDate[1] = new Date()
+    if (params && params['queryDate']) {
+      rangeDate[0] = new Date(params['queryDate'])
+      rangeDate[1] = params['queryEndDate'] ? params['queryEndDate'] : new Date()
     }
+    // let maps = this.active.snapshot.queryParams
+    let state = params['state'] ? +params['state'] : null
     this.searchForm = this.fb.group({
       name: [null],
       idCard: [null],
-      color: [null],
-      queryDate: [null],
+      color: [state],
+      dateRange: [rangeDate.length ? rangeDate : null],
     })
     this.manageForm = this.fb.group({
       gkcs: [null, Validators.required],
@@ -219,10 +222,12 @@ export class MainDetailComponent extends ResultHelper implements OnInit {
     this.loading = true
     try {
       let obj = this.searchForm.value
-      let params = { ...obj, ...{ page: this.pageObj.page, size: this.pageObj.size } }
-      if (obj.queryDate) {
-        params.queryDate = this.dateHelper.formart(obj.queryDate, 'YYYY-MM-DD HH:mm:ss')
+      let params = _.cloneDeep({ ...obj, ...{ page: this.pageObj.page, size: this.pageObj.size } })
+      if (params.dateRange) {
+        params.queryDate = this.dateHelper.formart(params.dateRange[0], 'YYYY-MM-DD HH:mm:ss')
+        params.queryEndDate = this.dateHelper.formart(params.dateRange[1], 'YYYY-MM-DD HH:mm:ss')
       }
+      delete params.dateRange
       let [err, list] = await this.requestHelper(this.main.getMainDetails(params))
       if (!err) {
         this.listOfData = list.content || []
@@ -275,8 +280,9 @@ export class MainDetailComponent extends ResultHelper implements OnInit {
     this.downLoading = true
     try {
       let obj = Object.assign({}, this.searchForm.value)
-      if (obj.queryDate) {
-        obj.queryDate = this.dateHelper.formart(obj.queryDate, 'YYYY-MM-DD HH:mm:ss')
+      if (obj.dateRange) {
+        obj.queryDate = this.dateHelper.formart(obj.dateRange[0], 'YYYY-MM-DD HH:mm:ss')
+        obj.queryEndDate = this.dateHelper.formart(obj.dateRange[1], 'YYYY-MM-DD HH:mm:ss')
       }
       let data = await this.main.getMainDetailsExport(obj)
       this.fileHelper.downLoad(data)
@@ -340,15 +346,50 @@ export class MainDetailComponent extends ResultHelper implements OnInit {
     this.message.error(err)
   }
 
-  // 解除管控
+  // 管控设置
   manageForm: FormGroup
   manageVisible = false
   openManage() {
     if (!this.getCheckedData().every(item => item.deptId)) {
-      this.message.waring('选择的人员中有未分配部门的人员')
+      this.message.warning('选择的人员中有未分配部门的人员')
+      return
+    }
+    if (!this.isValidData()) {
+      this.message.warning(`审核人员的信息暂未录入完成:${this.illegalName}`)
       return
     }
     this.manageVisible = true
+  }
+  illegalName = null
+  isValidData() {
+    let keys = [
+      'cjxxrq',
+      'name',
+      'idCard',
+      'phoneNumber',
+      'rqmdd',
+      'gkz',
+      'xckgj',
+      'hcqk',
+      'qfxd',
+      'rylx',
+      'zqjzc',
+      'jkmys',
+      'hcryjdh',
+      'gkdd',
+      'gkzrr',
+      'hszm',
+      'xck',
+      'xcksb',
+      'dqsy',
+      'deptId',
+      'color',
+    ]
+    return this.getCheckedData().every(item => {
+      let signal = keys.every(el => item[el] || item[el] === 0)
+      this.illegalName = item.name
+      return signal
+    })
   }
   manageOkLoading = false
   async handleManage() {
