@@ -38,19 +38,17 @@ export class FlowOperationComponent extends ResultHelper implements OnInit {
   async loadData() {
     this.loading = true
     let user = getCurrentUser()
-    // let obj = {...this.pageObj,deptId : user.deptId}
+    if (!user.deptId) {
+      this.message.warning('管理员不能查询')
+      return
+    }
     let [err, data] = await this.requestHelper(this.main.getOwnerTask(user.deptId), false)
     if (!err) {
       this.dataSet = data || []
-      // this.pageObj.total = data.totalElements
     }
     this.loading = false
   }
   check() {
-    // if(!this.getCheckData().length){
-    //   this.message.waring('审核用户不能为空')
-    //   return
-    // }
     this.checkVisible = true
   }
   async delete(data) {
@@ -94,5 +92,30 @@ export class FlowOperationComponent extends ResultHelper implements OnInit {
   }
   getCheckData() {
     return this.dataSet.filter(item => item.checked)
+  }
+  loadingDetail = false
+  expandMap = new Map()
+  async detail(idCard) {
+    console.log(idCard)
+    if (this.expandMap.has(idCard) && this.expandMap.get(idCard).expand) {
+      let data = { expand: false, data: this.expandMap.get(idCard).data }
+      this.expandMap.set(idCard, data)
+      return
+    }
+
+    if (this.expandMap.has(idCard) && !this.expandMap.get(idCard).expand) {
+      let data = { expand: true, data: this.expandMap.get(idCard).data }
+      this.expandMap.set(idCard, data)
+      return
+    }
+    this.loadingDetail = true
+    let [err, data] = await this.requestHelper(this.main.getMainDetail({ idCard }))
+    if (!err) {
+      this.expandMap.set(idCard, { expand: true, data: data.content[0] })
+    }
+    this.loadingDetail = false
+  }
+  mapByidCard(idCard) {
+    return this.expandMap.get(idCard) ? this.expandMap.get(idCard).data : {}
   }
 }

@@ -16,7 +16,7 @@ export class ResultHelper {
         return [meta.message]
       }
     } catch (error) {
-      // this.message.error(error.message)
+      this.message.error(error.message)
       return [error.message]
     }
   }

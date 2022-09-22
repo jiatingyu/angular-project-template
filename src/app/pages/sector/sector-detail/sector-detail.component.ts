@@ -24,6 +24,7 @@ interface ItemData {
   addr: string
   color: number
   remark: string
+  createTime: number
 }
 
 @Component({

@@ -59,6 +59,8 @@ interface ItemData {
   xck?: string
   xcksb?: string
   dqsy?: string
+  createTime?: string
+  state?: number
 }
 
 const getDeparamentParent = data => {
@@ -89,6 +91,7 @@ export class MainDetailComponent extends ResultHelper implements OnInit {
   uri = window['env']['url']
   // 管控措施
   rateArr = []
+  userType = ['一般地区', '低风险地区', '中风险地区', '高风险地区', '境外', '密接', '次密接']
   constructor(
     private router: Router,
     private main: MainService,
@@ -141,8 +144,8 @@ export class MainDetailComponent extends ResultHelper implements OnInit {
     }
   }
 
-  updateEditCache(): void {
-    this.listOfData.forEach(item => {
+  updateEditCache(data): void {
+    data.forEach(item => {
       this.editCache[item.id] = {
         edit: false,
         data: { ...item },
@@ -151,6 +154,7 @@ export class MainDetailComponent extends ResultHelper implements OnInit {
   }
   // 部门
   departements = []
+  departementLists = []
   mapDepartments = {}
   parentDepartments = []
   templates = {
@@ -170,6 +174,7 @@ export class MainDetailComponent extends ResultHelper implements OnInit {
     this.searchForm = this.fb.group({
       name: [null],
       idCard: [null],
+      deptId: [null],
       color: [state],
       dateRange: [rangeDate.length ? rangeDate : null],
     })
@@ -188,6 +193,7 @@ export class MainDetailComponent extends ResultHelper implements OnInit {
     if (!err && !err1) {
       this.rateArr = data
       // 子孙部门
+      this.departementLists = data1.content
       this.departements = this.systemHelper.cascadeResource(data1.content || [])
       this.departements.forEach(item => {
         this.mapDepartments[item.id] = this.systemHelper.convertTreeToList(item)
@@ -213,7 +219,7 @@ export class MainDetailComponent extends ResultHelper implements OnInit {
   }
   search() {
     this.pageObj.page = 1
-    this.loadData()
+    this.tabIndex === 0 ? this.loadData() : this.loadHistory()
   }
   reset() {
     this.searchForm.reset()
@@ -232,7 +238,7 @@ export class MainDetailComponent extends ResultHelper implements OnInit {
       if (!err) {
         this.listOfData = list.content || []
         this.pageObj.total = list.totalElements
-        this.updateEditCache()
+        this.updateEditCache(this.listOfData)
       }
     } catch (error) {
     } finally {
@@ -429,5 +435,31 @@ export class MainDetailComponent extends ResultHelper implements OnInit {
       }
     }
     this.manageOkLoading = false
+  }
+  tabIndex = 0
+  changeTab(val) {
+    console.log(val)
+    this.pageObj.page = 1
+    if (val === 1) {
+      this.loadHistory()
+    }
+  }
+  historyData = []
+  async loadHistory() {
+    let obj = this.searchForm.value
+    let params = _.cloneDeep({ ...obj, ...{ page: this.pageObj.page, size: this.pageObj.size } })
+    params.state = params.color
+    if (params.dateRange) {
+      params.queryDate = this.dateHelper.formart(params.dateRange[0], 'YYYY-MM-DD HH:mm:ss')
+      params.queryEndDate = this.dateHelper.formart(params.dateRange[1], 'YYYY-MM-DD HH:mm:ss')
+    }
+    params.userId = getCurrentUser().id
+    delete params.dateRange
+    let [err, data] = await this.requestHelper(this.main.getWorkFlow(params))
+    if (!err) {
+      this.historyData = data.content.map(item => ({ ...item, ...item.zdryVo }))
+      this.pageObj.total = data.totalElements
+      this.updateEditCache(this.historyData)
+    }
   }
 }

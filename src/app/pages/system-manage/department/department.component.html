@@ -1,3 +1,17 @@
+<form nz-form [formGroup]="searchForm" [nzLayout]="'inline'">
+  <nz-form-item>
+    <nz-form-label [nzSm]="6" [nzXs]="24" nzFor="name">部门名称</nz-form-label>
+    <nz-form-control [nzSm]="14" [nzXs]="24">
+      <input nz-input formControlName="name" id="name" />
+    </nz-form-control>
+  </nz-form-item>
+  <nz-form-item>
+    <nz-form-control>
+      <button nz-button nzType="primary" (click)="loadData()">搜索</button>
+    </nz-form-control>
+  </nz-form-item>
+</form>
+
 <nz-card [nzTitle]="list">
   <nz-table #expandTable [nzData]="listOfMapData" [nzLoading]="resourceLoading">
     <thead>

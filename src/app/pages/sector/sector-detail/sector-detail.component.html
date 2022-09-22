@@ -90,16 +90,17 @@
         [nzIndeterminate]="isIndeterminate"
         (nzCheckedChange)="checkAll($event)"
       ></th>
-      <th nzWidth="6%">姓名</th>
-      <th nzWidth="6%">性别</th>
-      <th nzWidth="11%">电话</th>
+      <th nzWidth="5%">姓名</th>
+      <th nzWidth="5%">性别</th>
+      <th nzWidth="8%">电话</th>
       <th nzWidth="11%">身份证号</th>
-      <th nzWidth="7%">检测频次</th>
+      <th nzWidth="5%">检测频次</th>
       <th nzWidth="6%">行业</th>
       <th nzWidth="18%">工作单位</th>
       <th nzWidth="6%">实检数</th>
       <th nzWidth="6%">应检数</th>
       <th nzWidth="6%">状态</th>
+      <th nzWidth="160px">创建时间</th>
       <th nzWidth="8%">备注</th>
       <th>操作</th>
     </tr>
@@ -193,6 +194,9 @@
             <nz-option nzLabel="其他" [nzValue]="4"></nz-option>
           </nz-select>
         </ng-template>
+      </td>
+      <td>
+        {{ data.createTime | date: 'yyyy-MM-dd hh:mm:ss' }}
       </td>
       <td>
         <ng-container *ngIf="!editCache[data.id].edit; else remark">

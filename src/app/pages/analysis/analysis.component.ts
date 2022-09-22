@@ -53,7 +53,7 @@ export class AnalysisComponent extends ResultHelper implements OnInit {
         },
         tooltip: {},
         xAxis: {
-          data: [this._date.formart(this.date), '本周人数', '人月人数'],
+          data: [this._date.formart(this.date), '本周人数', '本月人数'],
         },
         yAxis: {},
         textStyle: {
@@ -76,7 +76,7 @@ export class AnalysisComponent extends ResultHelper implements OnInit {
         },
         tooltip: {},
         xAxis: {
-          data: [this._date.formart(this.date), '本周人数', '人月人数'],
+          data: [this._date.formart(this.date), '本周人数', '本月人数'],
         },
         yAxis: {},
         textStyle: {

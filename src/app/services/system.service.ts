@@ -82,8 +82,8 @@ export class SystemService {
   }
 
   // 部门相关
-  async getDetapartments(): Promise<IResponsePage<IDepartment[]>> {
-    return this.request.get('/dept', { params: { page: 1, size: 100 } })
+  async getDetapartments(param?: any): Promise<IResponsePage<IDepartment[]>> {
+    return this.request.get('/dept', { params: { page: 1, size: 100, ...param } })
   }
 
   async getDepartmentParents(parentId: number): Promise<IResponsePage<IDepartment[]>> {

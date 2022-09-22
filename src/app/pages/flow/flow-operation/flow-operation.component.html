@@ -42,22 +42,69 @@
         <th>管控措施</th>
         <th>备注</th>
         <th>发起时间</th>
+        <th>操作</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let data of basicTable.data; index as i">
-        <td nzLeft nzShowCheckbox [(nzChecked)]="data.checked" (nzCheckedChange)="itemCheckedChange()"></td>
-        <td>{{ data.id }}</td>
-        <td>{{ data.name }}</td>
-        <!-- <td>{{ data.metaInfo | json }}</td> -->
-        <td>{{ data.workFlowVo?.name }}</td>
-        <td>{{ data.workFlowVo?.idCard }}</td>
-        <td>{{ data.workFlowVo?.deptName }}</td>
-        <td>{{ data.workFlowVo?.userName }}</td>
-        <td>{{ data.workFlowVo?.gkcs }}</td>
-        <td>{{ data.workFlowVo?.content }}</td>
-        <td>{{ data.workFlowVo?.createTime | date: 'YYYY-MM-dd hh:mm:ss' }}</td>
-      </tr>
+      <ng-container *ngFor="let data of basicTable.data; index as i">
+        <tr>
+          <td nzLeft nzShowCheckbox [(nzChecked)]="data.checked" (nzCheckedChange)="itemCheckedChange()"></td>
+          <td>{{ data.id }}</td>
+          <td>{{ data.name }}</td>
+          <td>{{ data.workFlowVo?.name }}</td>
+          <td>{{ data.workFlowVo?.idCard }}</td>
+          <td>{{ data.workFlowVo?.deptName }}</td>
+          <td>{{ data.workFlowVo?.userName }}</td>
+          <td>{{ data.workFlowVo?.gkcs }}</td>
+          <td>{{ data.workFlowVo?.content }}</td>
+          <td>{{ data.workFlowVo?.createTime | date: 'YYYY-MM-dd hh:mm:ss' }}</td>
+          <td>
+            <a nz-button nzType="link" [nzLoading]="loadingDetail" (click)="detail(data.workFlowVo?.idCard)">详情信息</a>
+          </td>
+        </tr>
+        <tr [nzExpand]="expandMap.has(data.workFlowVo?.idCard) && expandMap.get(data.workFlowVo?.idCard).expand">
+          <td style="background: white">
+            <nz-descriptions [nzSize]="'small'" nzBordered [nzColumn]="6">
+              <nz-descriptions-item nzTitle="目的地">{{ mapByidCard(data.workFlowVo?.idCard).rqmdd }} </nz-descriptions-item>
+              <nz-descriptions-item nzTitle="管控镇">{{ mapByidCard(data.workFlowVo?.idCard).gkz }} </nz-descriptions-item>
+              <nz-descriptions-item nzTitle="7天行程卡轨迹"
+                >{{ mapByidCard(data.workFlowVo?.idCard).xckgj }}
+              </nz-descriptions-item>
+              <nz-descriptions-item nzTitle="核查情况">{{ mapByidCard(data.workFlowVo?.idCard).hcqk }} </nz-descriptions-item>
+              <nz-descriptions-item nzTitle="7天内返犍风险地"
+                >{{ mapByidCard(data.workFlowVo?.idCard).qfxd }}
+              </nz-descriptions-item>
+              <nz-descriptions-item nzTitle="人员类型">{{ mapByidCard(data.workFlowVo?.idCard).rylx }} </nz-descriptions-item>
+              <nz-descriptions-item nzTitle="在犍的居住村、社区"
+                >{{ mapByidCard(data.workFlowVo?.idCard).zqjzc }}
+              </nz-descriptions-item>
+              <nz-descriptions-item nzTitle="健康码颜色">{{ mapByidCard(data.workFlowVo?.idCard).jkmys }} </nz-descriptions-item>
+              <nz-descriptions-item nzTitle="核查人员及电话"
+                >{{ mapByidCard(data.workFlowVo?.idCard).hcryjdh }}
+              </nz-descriptions-item>
+              <nz-descriptions-item nzTitle="实际管控措施">{{ mapByidCard(data.workFlowVo?.idCard).gkcs }} </nz-descriptions-item>
+              <nz-descriptions-item nzTitle="管控地点">{{ mapByidCard(data.workFlowVo?.idCard).gkdd }} </nz-descriptions-item>
+              <nz-descriptions-item nzTitle="实际管控开始时间"
+                >{{ mapByidCard(data.workFlowVo?.idCard).gksj }}
+              </nz-descriptions-item>
+              <nz-descriptions-item nzTitle="“五包一”管控责"
+                >{{ mapByidCard(data.workFlowVo?.idCard).gkzrr }}
+              </nz-descriptions-item>
+              <nz-descriptions-item nzTitle="是否持有48小时内核酸阴性证明"
+                >{{ mapByidCard(data.workFlowVo?.idCard).hszm }}
+              </nz-descriptions-item>
+              <nz-descriptions-item nzTitle="备注">{{ mapByidCard(data.workFlowVo?.idCard).remark }} </nz-descriptions-item>
+              <nz-descriptions-item nzTitle="途经全部城市"
+                >{{ mapByidCard(data.workFlowVo?.idCard).xcksb }}
+              </nz-descriptions-item>
+              <nz-descriptions-item nzTitle="到犍事由">{{ mapByidCard(data.workFlowVo?.idCard).dqsy }} </nz-descriptions-item>
+              <nz-descriptions-item nzTitle="所属部门"
+                >{{ mapByidCard(data.workFlowVo?.idCard).deptVo?.name }}
+              </nz-descriptions-item>
+            </nz-descriptions>
+          </td>
+        </tr>
+      </ng-container>
     </tbody>
   </nz-table>
   <ng-template #list>

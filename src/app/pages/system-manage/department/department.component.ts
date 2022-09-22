@@ -13,6 +13,7 @@ import { SystemService } from 'src/app/services/system.service'
 })
 export class DepartmentComponent extends ResultHelper implements OnInit {
   resourceLoading: boolean = false
+  searchForm: FormGroup
   validateForm: FormGroup
   resourceVisible: boolean = false
   // 父级资源
@@ -27,6 +28,9 @@ export class DepartmentComponent extends ResultHelper implements OnInit {
   }
   submitForm() {}
   ngOnInit() {
+    this.searchForm = this.fb.group({
+      name: [null],
+    })
     this.validateForm = this.fb.group({
       parentId: [],
       name: [null, Validators.required],
@@ -37,7 +41,8 @@ export class DepartmentComponent extends ResultHelper implements OnInit {
   async loadData() {
     this.resourceLoading = true
     try {
-      let { data } = await this.system.getDetapartments()
+    
+      let { data } = await this.system.getDetapartments(this.searchForm.value)
       this.listOfMapData = this.systemHelper.cascadeResource(data.content || [])
       // 数据变成级联结构
 

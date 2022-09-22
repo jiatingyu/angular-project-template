@@ -172,8 +172,8 @@ export class MainService {
     // return this.request.post(`/workFlow`, data)
     return this.request.post(`/workFlow/batch`, data)
   }
-  async getWorkFlow() {
-    return this.request.get(`/workFlow`)
+  async getWorkFlow(params) {
+    return this.request.get(`/workFlow`, { params })
   }
 
   // 管控设置
